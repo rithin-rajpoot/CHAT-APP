@@ -115,6 +115,6 @@ Want to improve ChatApp? Contributions are welcome! 🚀
 ## 📩 Contact & Support
 
 For queries, feel free to reach out:\
-📧 **Email:** [rajpootrithin@gmail.com](mailto\:your@email.com)\
-🔗 **LinkedIn:** [https://www.linkedin.com/in/rithin-rajpoot/](https://linkedin.com/in/yourprofile)
+📧 **Email:** [rajpootrithin@gmail.com](mailto\:rajpootrithin@gmail.com)\
+🔗 **LinkedIn:** [https://www.linkedin.com/in/rithin-rajpoot/](https://www.linkedin.com/in/rithin-rajpoot/)
 
