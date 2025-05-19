@@ -1,5 +1,6 @@
 import User from '../models/user.model.js'
 import {asyncHandler} from '../utilities/asyncHandler.utility.js';
+import cloudinary from '../utilities/cloudinary.utilty.js';
 import { errorHandler } from '../utilities/errorHandler.utility.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -38,10 +39,9 @@ export const register = asyncHandler(
 
         res.status(200)
         .cookie("token",token,{
-            // value: token,
-            expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV !== 'development',
             sameSite: 'none'
         })
         .json({success: true, responseData: {
@@ -58,7 +58,7 @@ export const login = asyncHandler(
            return next(new errorHandler("Your password or username is empty",400))
         }
 
-        const user = await User.findOne({username});
+        const user = await User.findOne({username}).select("-password");
         if(!user) {
             return next(new errorHandler("Your password or username is Invalid!",400))
         }
@@ -93,7 +93,7 @@ export const getProfile = asyncHandler(
     async (req, res, next) => {
         const userId = req.user._id; // this req.user._id is set by the middleware
 
-        const profile = await User.findById(userId);
+        const profile = await User.findById(userId).select("-password");
 
         if(!profile) {
             return next(new errorHandler("User not found!",404))
@@ -132,6 +132,27 @@ export const getOtherUsers = asyncHandler(
             success: true,
             responseData: otherUsers
         });
+    }
+)
+
+export const updateProfile = asyncHandler(
+    async (req, res, next) => {
+        const userId = req.user._id; 
+        const { avatar } = req.body;
+        if(!avatar) {
+            return next(new errorHandler("Please provide an avatar",400))
+        }
+        
+        const uploadRsponse = await cloudinary.uploader.upload(avatar);
+
+        const updatedUser = await User.findByIdAndUpdate(userId, {avatar: uploadRsponse.secure_url}, {new: true});
+
+        res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            responseData: updatedUser
+        });
+
     }
 )
 
