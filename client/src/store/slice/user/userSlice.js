@@ -26,8 +26,6 @@ const userSlice = createSlice({
         });
 
         builder.addCase(loginUserThunk.fulfilled, (state, action) => { // action.payload => contains the data returned from loginUserThunk after fetching 
-            // console.log("fullfilled");
-            // console.log(action.payload?.responseData?.user)
             state.userProfile = action.payload?.responseData?.user // store the data fetched from backend
             state.isAuthenticated = true;
             state.buttonLoading = false;
