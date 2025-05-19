@@ -73,7 +73,7 @@ Create a `.env` file in the **server** folder:
 
 ```
 MONGO_URI="mongodb://127.0.0.1:27017/chatapp"
-JWT_SECRET="eriuhg7yvbdi"
+JWT_SECRET="*************"
 ```
 
 ### 4️⃣ Start the Application
