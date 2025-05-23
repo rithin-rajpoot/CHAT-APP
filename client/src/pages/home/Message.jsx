@@ -43,7 +43,7 @@ const Message = ({ messageDetails }) => {
         <div className="chat-header">
           <time className="text-xs opacity-50">{time}</time>
         </div>
-        <div className="chat-bubble">{messageDetails?.message}</div>
+        <div className="chat-bubble text-xs md:text-sm lg:text-md">{messageDetails?.message}</div>
       </div>
     </>
   );

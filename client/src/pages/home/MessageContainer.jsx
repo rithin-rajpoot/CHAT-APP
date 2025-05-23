@@ -5,9 +5,11 @@ import { getMessagesThunk } from "../../store/slice/message/messageThunk.js";
 import Message from "./Message.jsx";
 import SendMsg from "./SendMsg.jsx";
 import TopContainer from "./TopContainer.jsx";
+import MessageSkeleton from "../skeletons/MessageSkeleton.jsx";
+import NoChatSelected from "./NoChatSelected.jsx";
 
 const MessageContainer = () => {
-  const { messages } = useSelector((state) => state.messageReducer);
+  const { messages, screenLoading } = useSelector((state) => state.messageReducer);
 
   const { selectedUser } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
@@ -18,16 +20,15 @@ const MessageContainer = () => {
     }
   }, [selectedUser?._id]);
 
+  if(screenLoading) return <MessageSkeleton />
+
   return (
     <>
       {!selectedUser ? (
-        <div className="w-full flex items-center justify-center flex-col gap-3 font-semibold">
-          <h2>Welcome to Gup Shup</h2>
-          <p>Please select a user to chat!!</p>
-        </div>
+        <NoChatSelected />
       ) : (
         <div className="w-full h-screen flex flex-col">
-          <div className="px-2 py-1 border-b border-b-white/10">
+          <div className="px-2 py-2 border-b border-b-primary/30">
             <TopContainer userDetails={selectedUser} />
           </div>
           <div className="h-full overflow-y-auto p-3">

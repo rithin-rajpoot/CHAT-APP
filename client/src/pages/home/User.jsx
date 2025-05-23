@@ -18,18 +18,18 @@ const User = ({ userDetails }) => {
   return (
     <div
       onClick={handleUserClick}
-      className={`flex gap-5 items-center px-3 py-2 my-1 hover:bg-gray-800 cursor-pointer hover:rounded-md ${
-        userDetails?._id === selectedUser?._id && "bg-gray-800"
+      className={`flex gap-5 items-center px-3 py-2 my-1 hover:bg-primary/30 cursor-pointer hover:rounded-md ${
+        userDetails?._id === selectedUser?._id && "bg-primary/30"
       }`}
     >
       <div className={`avatar ${isUserOnline && 'avatar-online'}`}>
       
-       <div className="md:w-10 lg:w-12 rounded-full">
+       <div className="w-8 md:w-10 lg:w-10 rounded-full">
           <img src={userDetails?.avatar || "/avatar.png"} />
         </div>
       </div>
       <div>
-        <h2 className="md:text-sm lg:text-lg">{userDetails?.fullName}</h2>
+        <h2 className="text-sm md:text-sm lg:text-md">{userDetails?.fullName}</h2>
         <p className="text-xs">{isUserOnline? "online" : "offline"}</p>
       </div>
     </div>

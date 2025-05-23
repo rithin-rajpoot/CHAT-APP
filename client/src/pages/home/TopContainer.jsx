@@ -31,22 +31,22 @@ const TopContainer = ({ userDetails }) => {
 
   return (
     <div
-      className="relative flex gap-5 items-center px-3 py-4 my-1 bg-slate-800 rounded-md cursor-pointer"
+      className="relative flex gap-5 items-center px-3 py-2 my-1 rounded-md bg-primary/30"
     >
       <div className={`avatar ${isUserOnline && "avatar-online"}`}>
-        <div className="md:w-10 lg:w-12 rounded-full">
+        <div className="w-8 md:w-10 lg:w-10 rounded-full">
           <img src={userDetails?.avatar || "/avatar.png"} />
         </div>
       </div>
       <div>
-        <h2 className="md:text-sm lg:text-lg">{userDetails?.fullName}</h2>
+        <h2 className="text-xs md:text-sm lg:text-md">{userDetails?.fullName}</h2>
         <p className="text-xs">{isUserOnline ? "online" : "offline"}</p>
       </div>
       <button
-        className="ml-auto px-2"
+        className="ml-auto px-2 cursor-pointer"
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        <IoIosSettings className="md:text-3xl lg:text-4xl text-slate-400" />
+        <IoIosSettings className="xl md:text-2xl lg:text-3xl" />
       </button>
 
       {menuOpen && (

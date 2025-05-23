@@ -8,11 +8,12 @@ import {
 } from "../../store/slice/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket, setOnlineUsers } from "../../store/slice/socket/socketSlice";
+import SidebarSkeleton from "../skeletons/SideBarSkeleton";
 const UserSidebar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { otherUsers, userProfile } = useSelector((state) => state.userReducer);
+  const { otherUsers, userProfile, screenLoading } = useSelector((state) => state.userReducer);
 
 
   const [searchValue, setSearchValue] = useState("");
@@ -48,10 +49,12 @@ const UserSidebar = () => {
     navigate('/profile')
   }
 
+  if (screenLoading) return <SidebarSkeleton />;
+
   return (
-    <div className="max-w-[20rem] w-full h-screen flex flex-col border-r border-r-white/10">
-      <h1 className="mx-3 mt-3 rounded-lg text-[#605DFF] bg-black text-xl font-bold px-3 py-1 text-center">
-        CHAT APP
+    <div className="max-w-[20rem] w-full h-screen flex flex-col border-r border-r-primary/30">
+      <h1 className="mx-3 mt-3 rounded-lg bg-primary/30 text-xl font-bold px-3 py-1 text-center">
+        GUP SHUP
       </h1>
 
       <div className="p-3">
@@ -71,7 +74,7 @@ const UserSidebar = () => {
         })}
       </div>
 
-      <div className="flex gap-5 justify-between p-3">
+      <div className="flex gap-5 justify-between p-3 bg-primary/5">
         <div className="flex gap-3 items-center">
           <div className="avatar">
             <div className="ring-primary ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
@@ -79,7 +82,7 @@ const UserSidebar = () => {
             </div>
           </div>
           <div className="tooltip" data-tip="click to view profile">
-            <button onClick={handleClick} className="rounded-md px-2 py-1 ">{userProfile?.fullName}</button>
+            <button onClick={handleClick} className="rounded-md px-2 py-1 cursor-pointer">{userProfile?.fullName}</button>
           </div>
         </div>
         <button

@@ -10,9 +10,19 @@ const SendMsg = () => {
   const { selectedUser } = useSelector((state) => state.userReducer);
 
   const handleSendMessage = () => {
+    if (!message.trim()) return;
     dispatch(sendMessageThunk({ receiverId: selectedUser?._id, message }));
     setMessage("");
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // prevent newline if it's a textarea
+      handleSendMessage();
+    }
+  };
+
+
   return (
     <>
       <div className="w-full p-3 flex gap-2">
@@ -22,6 +32,7 @@ const SendMsg = () => {
           className="input input-bordered input-primary w-full"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button
           onClick={handleSendMessage}

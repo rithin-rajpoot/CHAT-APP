@@ -33,16 +33,16 @@ const messageSlice = createSlice({
 
         // get messages
         builder.addCase(getMessagesThunk.pending, (state, action) => {
-            state.buttonLoading = true;
+            state.screenLoading = true;
         });
 
         builder.addCase(getMessagesThunk.fulfilled, (state, action) => { 
-            state.buttonLoading = false;
+            state.screenLoading = false;
             state.messages = action.payload?.responseData?.messages;
         });
 
         builder.addCase(getMessagesThunk.rejected, (state, action) => { 
-            state.buttonLoading = false;
+            state.screenLoading = false;
         });
 
     },

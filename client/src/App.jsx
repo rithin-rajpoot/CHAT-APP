@@ -1,22 +1,29 @@
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { useDispatch, useSelector } from 'react-redux'
-import { getUserProfileThunk, getOtherUsersThunk } from "./store/slice/user/userThunk";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getUserProfileThunk,
+} from "./store/slice/user/userThunk";
 
 function App() {
-
   const dispatch = useDispatch();
+  const { currTheme } = useSelector((state) => state.themeReducer);
 
-  useEffect(() =>{
-    ( async () =>{
-       await dispatch(getUserProfileThunk());
-    })()
-  }, [])
+  useEffect(() => {
+    (async () => {
+      await dispatch(getUserProfileThunk());
+    })();
+  }, []);
+
+  
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", currTheme); 
+  }, []);
 
   return (
-    <>
-      <Toaster position="top-center" reverseOrder={false} />
-    </>
+    <div>
+      <Toaster className="bg-primary" position="top-right" reverseOrder={false} />
+    </div>
   );
 }
 
