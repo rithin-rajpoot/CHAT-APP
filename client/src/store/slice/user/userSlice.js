@@ -25,15 +25,13 @@ const userSlice = createSlice({
             state.buttonLoading = true;
         });
 
-        builder.addCase(loginUserThunk.fulfilled, (state, action) => { // action.payload => contains the data returned from loginUserThunk after fetching 
-            state.userProfile = action.payload?.responseData?.user // store the data fetched from backend
+        builder.addCase(loginUserThunk.fulfilled, (state, action) => { 
+            state.userProfile = action.payload?.responseData?.user 
             state.isAuthenticated = true;
             state.buttonLoading = false;
         });
 
-        builder.addCase(loginUserThunk.rejected, (state, action) => { // action.payload => contains the data returned from rejectWithValue()
-            //   console.log("rejected")
-            //   console.log(action.payload)
+        builder.addCase(loginUserThunk.rejected, (state, action) => { 
             state.buttonLoading = false;
         });
 

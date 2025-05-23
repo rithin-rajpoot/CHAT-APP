@@ -7,7 +7,7 @@ import {
   logoutUserThunk,
 } from "../../store/slice/user/userThunk";
 import { useNavigate } from "react-router-dom";
-import { setOnlineUsers } from "../../store/slice/socket/socketSlice";
+import { disconnectSocket, setOnlineUsers } from "../../store/slice/socket/socketSlice";
 const UserSidebar = () => {
 
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const UserSidebar = () => {
 
   const handleLogout = async () => {
     await dispatch(logoutUserThunk());
+    dispatch(disconnectSocket());
     navigate("/login");
   };
 

@@ -38,7 +38,8 @@ const Home = () => {
     });
 
     return () =>{
-      socket.close();
+      socket.off("onlineUsers");
+      socket.off("newMessage");
     }
 
   }, [socket]);

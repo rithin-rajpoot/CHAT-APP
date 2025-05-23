@@ -24,8 +24,6 @@ export const sendMessage = asyncHandler(
             imageUrl = result.secure_url;
         }
 
-
-
         // Before sending the message, check whether there is a past conversation,
         //  if yes, send message in the same conversation, else create a new conversation
         let conversation = await Conversation.findOne({
@@ -50,6 +48,7 @@ export const sendMessage = asyncHandler(
 
         // web socket implementation
         io.to(getSocketId(receiverId)).emit('newMessage', newMessage);
+        io.to(getSocketId(senderId)).emit('newMessage', newMessage);
 
 
         res.status(200).json({

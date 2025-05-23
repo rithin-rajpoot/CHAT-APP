@@ -7,19 +7,10 @@ const SendMsg = () => {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState("");
-  const { selectedUser, userProfile } = useSelector((state) => state.userReducer);
+  const { selectedUser } = useSelector((state) => state.userReducer);
 
   const handleSendMessage = () => {
     dispatch(sendMessageThunk({ receiverId: selectedUser?._id, message }));
-    dispatch(
-      setNewMessage({
-        _id: 'temp-' + Date.now(),
-        message: message,
-        senderId: userProfile?._id,
-        receiverId: selectedUser?._id,
-        createdAt: new Date().toISOString(),
-      })
-    );
     setMessage("");
   };
   return (
