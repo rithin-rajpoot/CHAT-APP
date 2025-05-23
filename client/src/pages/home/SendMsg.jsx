@@ -2,14 +2,24 @@ import React, { useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { sendMessageThunk } from "../../store/slice/message/messageThunk";
+import { setNewMessage } from "../../store/slice/message/messageSlice";
 const SendMsg = () => {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState("");
-  const { selectedUser } = useSelector((state) => state.userReducer);
+  const { selectedUser, userProfile } = useSelector((state) => state.userReducer);
 
   const handleSendMessage = () => {
     dispatch(sendMessageThunk({ receiverId: selectedUser?._id, message }));
+    dispatch(
+      setNewMessage({
+        _id: 'temp-' + Date.now(),
+        message: message,
+        senderId: userProfile?._id,
+        receiverId: selectedUser?._id,
+        createdAt: new Date().toISOString(),
+      })
+    );
     setMessage("");
   };
   return (

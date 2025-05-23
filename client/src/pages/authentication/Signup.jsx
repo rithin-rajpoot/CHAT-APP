@@ -19,6 +19,8 @@ const Signup = () => {
     gender: "male",
   });
 
+  const [password, setPassword] = useState(false);
+
   useEffect(() => {
       if (isAuthenticated) {
         navigate("/");
@@ -26,7 +28,6 @@ const Signup = () => {
     }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
-    // console.log(e.target.value)
     setSignupData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 

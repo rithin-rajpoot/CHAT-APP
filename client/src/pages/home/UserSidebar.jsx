@@ -6,16 +6,21 @@ import {
   getOtherUsersThunk,
   logoutUserThunk,
 } from "../../store/slice/user/userThunk";
+import { useNavigate } from "react-router-dom";
+import { setOnlineUsers } from "../../store/slice/socket/socketSlice";
 const UserSidebar = () => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { otherUsers, userProfile } = useSelector((state) => state.userReducer);
+
 
   const [searchValue, setSearchValue] = useState("");
   const [filteredUsers, setFilteredUsers] = useState(otherUsers);
 
   const handleLogout = async () => {
     await dispatch(logoutUserThunk());
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -37,6 +42,10 @@ const UserSidebar = () => {
       )
     } 
   },[searchValue, otherUsers]);
+
+  const handleClick = () => {
+    navigate('/profile')
+  }
 
   return (
     <div className="max-w-[20rem] w-full h-screen flex flex-col border-r border-r-white/10">
@@ -65,11 +74,11 @@ const UserSidebar = () => {
         <div className="flex gap-3 items-center">
           <div className="avatar">
             <div className="ring-primary ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-              <img src={userProfile?.avatar} />
+              <img src={userProfile?.avatar || "/avatar.png"} />
             </div>
           </div>
-          <div>
-            <h2 className="text-white">{userProfile?.fullName}</h2>
+          <div className="tooltip" data-tip="click to view profile">
+            <button onClick={handleClick} className="text-white rounded-md px-2 py-1 ">{userProfile?.fullName}</button>
           </div>
         </div>
         <button

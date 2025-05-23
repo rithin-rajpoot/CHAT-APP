@@ -3,7 +3,7 @@ import {io} from 'socket.io-client'
 
 const initialState = {
     socket: null,
-    onlineUsers: null,
+    onlineUsers: [],
 }
 
 const socketSlice = createSlice({
@@ -19,7 +19,6 @@ const socketSlice = createSlice({
         
         state.socket = socket;
       },
-
       setOnlineUsers: (state, action) => {
         state.onlineUsers = action.payload;
       }

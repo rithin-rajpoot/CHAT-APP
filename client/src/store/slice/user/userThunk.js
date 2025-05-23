@@ -15,7 +15,6 @@ export const loginUserThunk = createAsyncThunk('user/login',
 
         } catch (error) {
             const errorOutput = error?.response?.data?.errMessage;
-            // console.log(errorOutput)
             toast.error(errorOutput);
             return rejectWithValue(errorOutput)
         }
@@ -81,6 +80,23 @@ export const getOtherUsersThunk = createAsyncThunk('user/getOtherUsers',
 
         } catch (error) {
             const errorOutput = error?.response?.data?.errMessage;
+            return rejectWithValue(errorOutput)
+        }
+    }
+);
+
+export const updateProfileThunk = createAsyncThunk('user/updateProfile',
+    async ({ profilePic }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post('/user/update-profile',{
+                avatar: profilePic
+            });
+            toast.success("Profile Updated Successfully!!");
+            return response.data;
+
+        } catch (error) {
+            const errorOutput = error?.response?.data?.errMessage;
+            toast.error(errorOutput);
             return rejectWithValue(errorOutput)
         }
     }

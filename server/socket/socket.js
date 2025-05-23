@@ -24,9 +24,9 @@ const userSocketMap = {
 
 io.on("connection", (socket) =>{
     const userId = socket.handshake.query.userId; // whenever a user connects from frontend, a query containing userId is recieved
-    if(!userId) return;
-
-    userSocketMap[userId] = socket.id;
+    if(userId) {
+        userSocketMap[userId] = socket.id;
+    }
 
     // console.log(Object.keys(userSocketMap))
     //if any user is connected, we add that user to the userSocketMap, which represents all the connected users(online users)

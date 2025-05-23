@@ -23,6 +23,8 @@ const Home = () => {
     dispatch(initializeSocket(userProfile?._id));
   }, [isAuthenticated]);
 
+   
+
   // simultaneously we recieve all the online users from server
   useEffect(() => {
     if (!socket) return;

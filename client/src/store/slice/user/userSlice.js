@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getOtherUsersThunk, getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk } from './userThunk'
+import { getOtherUsersThunk, getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk, updateProfileThunk } from './userThunk'
 
 const initialState = {
     isAuthenticated: false,
@@ -44,7 +44,7 @@ const userSlice = createSlice({
         });
 
         builder.addCase(registerUserThunk.fulfilled, (state, action) => {
-            state.userProfile = action.payload?.responseData?.user
+            state.userProfile = action.payload?.responseData?.newUser
             state.buttonLoading = false;
             state.isAuthenticated = true;
         });
@@ -98,6 +98,20 @@ const userSlice = createSlice({
         });
 
         builder.addCase(getOtherUsersThunk.rejected, (state, action) => {
+            state.screenLoading = false;
+        });
+
+        // update user profile
+        builder.addCase(updateProfileThunk.pending, (state, action) => {
+            state.screenLoading = true;
+        });
+
+        builder.addCase(updateProfileThunk.fulfilled, (state, action) => {
+            state.screenLoading = false;
+            state.userProfile = action.payload?.responseData;
+        });
+
+        builder.addCase(updateProfileThunk.rejected, (state, action) => {
             state.screenLoading = false;
         });
     },

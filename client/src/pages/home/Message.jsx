@@ -1,9 +1,11 @@
 import React, { use, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import { format } from 'date-fns'
 
 const Message = ({ messageDetails }) => {
 
   const messageRef = useRef(null);
+  const time = format(new Date(messageDetails.createdAt), 'HH:mm');
 
   const { selectedUser, userProfile } = useSelector(
     (state) => state.userReducer
@@ -32,14 +34,14 @@ const Message = ({ messageDetails }) => {
               alt="Tailwind CSS chat bubble component"
               src={
                 userProfile?._id === messageDetails?.senderId
-                  ? userProfile.avatar
-                  : selectedUser.avatar
+                  ? userProfile?.avatar || "/avatar.png"
+                  : selectedUser.avatar || "/avatar.png"
               }
             />
           </div>
         </div>
         <div className="chat-header">
-          <time className="text-xs opacity-50">12:45</time>
+          <time className="text-xs opacity-50">{time}</time>
         </div>
         <div className="chat-bubble">{messageDetails?.message}</div>
       </div>

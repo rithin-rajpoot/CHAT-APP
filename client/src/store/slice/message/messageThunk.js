@@ -4,10 +4,11 @@ import { axiosInstance } from '../../../components/utilities/axiosInstance.js'
 
 
 export const sendMessageThunk = createAsyncThunk('message/send',
-    async ({ receiverId, message }, { rejectWithValue }) => {
+    async ({ receiverId, message, image }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(`message/send/${receiverId}`,{
                 message,
+                image
             });
             return response.data;
 

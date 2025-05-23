@@ -9,8 +9,7 @@ function App() {
 
   useEffect(() =>{
     ( async () =>{
-       const r = await dispatch(getUserProfileThunk());
-       console.log(r?.payload)
+       await dispatch(getUserProfileThunk());
     })()
   }, [])
 

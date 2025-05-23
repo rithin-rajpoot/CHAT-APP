@@ -20,15 +20,11 @@ export const register = asyncHandler(
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const avatarType = gender === "male" ? "boy" : "girl";
-        const avatar = `https://avatar.iran.liara.run/public/${avatarType}?username=${username}`
-
         const newUser = await User.create({ //creates and saves the user
             fullName,
             username,
             password: hashedPassword,
             gender,
-            avatar
         })
 
         // Generate and send JWT
@@ -41,7 +37,7 @@ export const register = asyncHandler(
         .cookie("token",token,{
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
+            secure: true,
             sameSite: 'none'
         })
         .json({success: true, responseData: {
@@ -58,7 +54,7 @@ export const login = asyncHandler(
            return next(new errorHandler("Your password or username is empty",400))
         }
 
-        const user = await User.findOne({username}).select("-password");
+        const user = await User.findOne({username})
         if(!user) {
             return next(new errorHandler("Your password or username is Invalid!",400))
         }
@@ -108,7 +104,6 @@ export const getProfile = asyncHandler(
 export const logout = asyncHandler(
     async (req, res, next) => {
         
-        // console.log(req.cookies.token)
         res.status(200)
         .cookie("token","", {
             expires: new Date(Date.now()),
