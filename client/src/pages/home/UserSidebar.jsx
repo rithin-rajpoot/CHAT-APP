@@ -79,7 +79,7 @@ const UserSidebar = () => {
             </div>
           </div>
           <div className="tooltip" data-tip="click to view profile">
-            <button onClick={handleClick} className="text-white rounded-md px-2 py-1 ">{userProfile?.fullName}</button>
+            <button onClick={handleClick} className="rounded-md px-2 py-1 ">{userProfile?.fullName}</button>
           </div>
         </div>
         <button
