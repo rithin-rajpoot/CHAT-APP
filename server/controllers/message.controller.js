@@ -115,12 +115,10 @@ export const clearChat = asyncHandler(async (req, res, next) => {
     // Clear the messages array in the conversation document
     conversation.messages = [];
     await conversation.save();
-    await conversation.populate("messages");
 
     res.status(200).json({
         success: true,
         message: "Chat cleared successfully",
-        responseData: conversation,
     });
 });
 

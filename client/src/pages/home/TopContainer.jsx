@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { IoIosSettings } from "react-icons/io";
 import { useWindowWidth } from "@react-hook/window-size";
 import { setSelectedUser } from "../../store/slice/user/userSlice";
-import { useNavigate } from "react-router-dom";
 import { clearChatThunk } from "../../store/slice/message/messageThunk";
 
 const TopContainer = ({ userDetails }) => {

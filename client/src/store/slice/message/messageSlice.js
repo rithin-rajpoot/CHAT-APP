@@ -53,7 +53,7 @@ const messageSlice = createSlice({
 
         builder.addCase(clearChatThunk.fulfilled, (state, action) => { 
             state.clearChatLoading = false;
-            state.messages = action.payload?.responseData?.messages;
+            state.messages = [];
         });
 
         builder.addCase(clearChatThunk.rejected, (state, action) => { 
