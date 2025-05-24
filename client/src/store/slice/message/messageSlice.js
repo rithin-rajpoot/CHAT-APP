@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getMessagesThunk, sendMessageThunk } from './messageThunk';
+import { clearChatThunk, getMessagesThunk, sendMessageThunk } from './messageThunk';
 
 const initialState = {
     buttonLoading: false,
     messages: [],
     screenLoading: false,
+    clearChatLoading: false,
 }
 
 const messageSlice = createSlice({
@@ -43,6 +44,20 @@ const messageSlice = createSlice({
 
         builder.addCase(getMessagesThunk.rejected, (state, action) => { 
             state.screenLoading = false;
+        });
+
+        // clear chat
+        builder.addCase(clearChatThunk.pending, (state, action) => {
+            state.clearChatLoading = true;
+        });
+
+        builder.addCase(clearChatThunk.fulfilled, (state, action) => { 
+            state.clearChatLoading = false;
+            state.messages = action.payload?.responseData?.messages;
+        });
+
+        builder.addCase(clearChatThunk.rejected, (state, action) => { 
+            state.clearChatLoading = false;
         });
 
     },

@@ -34,3 +34,16 @@ export const getMessagesThunk = createAsyncThunk('message/getMesssages',
         }
     }
 );
+
+export const  clearChatThunk = createAsyncThunk('message/clearChat',
+    async ({ receiverId }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.delete(`message/clear-chat/${receiverId}`);
+            return response.data;
+
+        } catch (error) {
+            const errorOutput = error?.response?.data?.errMessage;
+            return rejectWithValue(errorOutput)
+        }
+    }
+);

@@ -7,9 +7,13 @@ import SendMsg from "./SendMsg.jsx";
 import TopContainer from "./TopContainer.jsx";
 import MessageSkeleton from "../skeletons/MessageSkeleton.jsx";
 import NoChatSelected from "./NoChatSelected.jsx";
+import ClearingChatSkeleton from "../skeletons/ClearingChatSkeleton.jsx";
+import NoMessages from "../skeletons/NoMessages.jsx";
 
 const MessageContainer = () => {
-  const { messages, screenLoading } = useSelector((state) => state.messageReducer);
+  const { messages, screenLoading, clearChatLoading } = useSelector(
+    (state) => state.messageReducer
+  );
 
   const { selectedUser } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
@@ -20,7 +24,8 @@ const MessageContainer = () => {
     }
   }, [selectedUser?._id]);
 
-  if(screenLoading) return <MessageSkeleton />
+  if (screenLoading) return <MessageSkeleton />;
+  if (clearChatLoading) return <ClearingChatSkeleton />;
 
   return (
     <>
@@ -32,15 +37,19 @@ const MessageContainer = () => {
             <TopContainer userDetails={selectedUser} />
           </div>
           <div className="h-full overflow-y-auto p-3">
-            {messages
-              ?.filter(
-                (message) =>
-                  message.senderId === selectedUser._id ||
-                  message.receiverId === selectedUser._id
-              )
-              .map((message) => (
-                <Message key={message._id} messageDetails={message} />
-              ))}
+            {messages?.length === 0 ? (
+              <NoMessages />
+            ) : (
+              messages
+                ?.filter(
+                  (message) =>
+                    message.senderId === selectedUser._id ||
+                    message.receiverId === selectedUser._id
+                )
+                .map((message) => (
+                  <Message key={message._id} messageDetails={message} />
+                ))
+            )}
           </div>
           <SendMsg />
         </div>

@@ -7,8 +7,14 @@ import {
   setOnlineUsers,
 } from "../../store/slice/socket/socketSlice";
 import { setNewMessage } from "../../store/slice/message/messageSlice";
+import { useWindowWidth } from "@react-hook/window-size";
 
 const Home = () => {
+
+  const onlyWidth = useWindowWidth();
+  const { selectedUser } = useSelector((state) => state.userReducer);
+
+  const isMobile = onlyWidth < 768; // Tailwind md breakpoint
 
   const dispatch = useDispatch();
   const {isAuthenticated, userProfile} = useSelector(
@@ -45,9 +51,21 @@ const Home = () => {
   }, [socket]);
 
   return (
-    <div className="flex">
-      <UserSidebar />
-      <MessageContainer />
+     <div className="w-full h-screen flex">
+      {/* Large screen - show both */}
+      {!isMobile && (
+        <>
+          <UserSidebar />
+          <MessageContainer />
+        </>
+      )}
+
+      {/* Small screen - conditional */}
+      {isMobile && (
+        <>
+          {!selectedUser ? <UserSidebar /> : <MessageContainer />}
+        </>
+      )}
     </div>
   );
 };

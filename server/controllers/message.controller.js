@@ -71,7 +71,7 @@ export const getConversationMessages = asyncHandler(
 
 
 
-        let conversation = await Conversation.findOne({
+        const conversation = await Conversation.findOne({
             participants: { $all: [myId, otherParticipantId] }, // returns the conversation which contains both sender and receiver 
         }).populate('messages');
 
@@ -88,3 +88,41 @@ export const getConversationMessages = asyncHandler(
         });
     }
 )
+
+export const clearChat = asyncHandler(async (req, res, next) => {
+    const myId = req.user._id;
+    const otherParticipantId = req.params.receiverId;
+
+    if (!myId || !otherParticipantId) {
+        return next(new errorHandler("All fields are required", 400));
+    }
+
+    // Find the conversation involving both users
+    const conversation = await Conversation.findOne({
+        participants: { $all: [myId, otherParticipantId] },
+    });
+
+    if (!conversation) {
+        return res.status(200).json({
+            success: true,
+            message: "No conversation found",
+        });
+    }
+
+    // Delete all messages associated with this conversation
+    await Message.deleteMany({ _id: { $in: conversation.messages } });
+
+    // Clear the messages array in the conversation document
+    conversation.messages = [];
+    await conversation.save();
+    await conversation.populate("messages");
+
+    res.status(200).json({
+        success: true,
+        message: "Chat cleared successfully",
+        responseData: conversation,
+    });
+});
+
+
+
