@@ -9,7 +9,9 @@ import toast from "react-hot-toast";
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.userReducer);
+  const { isAuthenticated, buttonLoading } = useSelector(
+    (state) => state.userReducer
+  );
 
   const [signupData, setSignupData] = useState({
     fullName: "",
@@ -22,22 +24,22 @@ const Signup = () => {
   const [password, setPassword] = useState(false);
 
   useEffect(() => {
-      if (isAuthenticated) {
-        navigate("/");
-      }
-    }, [isAuthenticated]);
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
     setSignupData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSignup = async () => {
-    if(signupData.password !== signupData.confirmPassword) {
+    if (signupData.password !== signupData.confirmPassword) {
       return toast.error("Passwords do not match");
     }
     const response = await dispatch(registerUserThunk(signupData));
-    if(response?.payload.success){
-      navigate('/');
+    if (response?.payload.success) {
+      navigate("/");
     }
   };
 
@@ -111,9 +113,15 @@ const Signup = () => {
             female
           </label>
         </div>
-        <button onClick={handleSignup} className="btn btn-primary">
-          Signup
-        </button>
+        {buttonLoading ? (
+          <button className="btn btn-primary">
+            <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>
+          </button>
+        ) : (
+          <button onClick={handleSignup} className="btn btn-primary">
+            Signup
+          </button>
+        )}
 
         <p>
           Already have an account?&nbsp;{" "}

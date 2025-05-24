@@ -6,7 +6,9 @@ import { loginUserThunk } from "../../store/slice/user/userThunk";
 import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
-  const { isAuthenticated } = useSelector((state) => state.userReducer);
+  const { isAuthenticated, buttonLoading } = useSelector(
+    (state) => state.userReducer
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,9 +64,15 @@ const Login = () => {
             onChange={handleInputChange}
           />
         </label>
-        <button onClick={handleLogin} className="btn btn-primary">
-          Login
-        </button>
+        {buttonLoading ? (
+          <button className="btn btn-primary">
+            <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>
+          </button>
+        ) : (
+          <button onClick={handleLogin} className="btn btn-primary">
+            Login
+          </button>
+        )}
 
         <p>
           Don't have an account?&nbsp;{" "}
