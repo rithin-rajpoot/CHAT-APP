@@ -39,7 +39,8 @@ const messageSlice = createSlice({
 
         builder.addCase(getMessagesThunk.fulfilled, (state, action) => { 
             state.screenLoading = false;
-            state.messages = action.payload?.responseData?.messages;
+            const { responseData } = action.payload;
+            state.messages = responseData?.messages || []; // if chatting with new user,the messages will be null so prevent it
         });
 
         builder.addCase(getMessagesThunk.rejected, (state, action) => { 
