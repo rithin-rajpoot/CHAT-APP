@@ -6,8 +6,9 @@ import {
   initializeSocket,
   setOnlineUsers,
 } from "../../store/slice/socket/socketSlice";
-import { setNewMessage } from "../../store/slice/message/messageSlice";
+import { setMessages, setNewMessage } from "../../store/slice/message/messageSlice";
 import { useWindowWidth } from "@react-hook/window-size";
+import { updateDeletedUser } from "../../store/slice/user/userSlice";
 
 const Home = () => {
 
@@ -43,9 +44,19 @@ const Home = () => {
       dispatch(setNewMessage(newMessage));
     });
 
+    socket.on("userDeleted", (userId) => {
+      dispatch(updateDeletedUser(userId));
+    })
+
+    socket.on('clearedChat', () => {
+      dispatch(setMessages());
+    })
+
     return () =>{
       socket.off("onlineUsers");
       socket.off("newMessage");
+      socket.off("userDeleted");
+      socket.off('clearedChat');
     }
 
   }, [socket]);

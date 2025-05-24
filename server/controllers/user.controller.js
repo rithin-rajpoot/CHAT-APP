@@ -4,6 +4,7 @@ import cloudinary from '../utilities/cloudinary.utilty.js';
 import { errorHandler } from '../utilities/errorHandler.utility.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { io } from '../socket/socket.js';
 
 export const register = asyncHandler(
     async (req, res, next) => {
@@ -40,7 +41,7 @@ export const register = asyncHandler(
             secure: true,
             sameSite: 'none'
         })
-        .json({success: true, responseData: {
+        .json({success: true, message: 'Account created successfully!', responseData: {
             newUser,
             token
         }})
@@ -151,17 +152,51 @@ export const updateProfile = asyncHandler(
     }
 )
 
-// export const delteUser= asyncHandler(
-//     async (req, res, next) => {
-//         const userId = req.user._id; // this req.user._id is set by the middleware\
-//         const user = await User.findByIdAndDelete(userId);
-//         if(!user) {
-//             return next(new errorHandler("User not found!",404))
-//         }
-//         res.status(200).json({
-//             success: true,
-//             message: "User deleted successfully"
-//         });
+export const deleteUser = asyncHandler(
+    async (req, res, next) => {
+        const userId = req.user._id; 
 
-//     }
-// )
+        const user = await User.findByIdAndDelete(userId);
+        if(!user) {
+            return next(new errorHandler("User not found!",404))
+        }
+
+        io.emit("userDeleted", userId); // Notify all clients about the user deletion
+
+        res.status(200).json({
+            success: true,
+            message: "Account deletion successful",
+        });
+
+    }
+)
+
+export const updatePassword = asyncHandler(
+    async (req, res, next) => {
+        const userId = req.user._id; 
+        const { oldPassword, newPassword } = req.body;
+
+        if(!oldPassword || !newPassword) {
+            return next(new errorHandler("Please provide old and new passwords",400))
+        }
+
+        const user = await User.findById(userId);
+        if(!user) {
+            return next(new errorHandler("User not found!",404))
+        }
+
+        const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+        if(!isValidPassword) {
+            return next(new errorHandler("Old password is incorrect",400))
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Password updated successfully",
+        });
+    }
+)

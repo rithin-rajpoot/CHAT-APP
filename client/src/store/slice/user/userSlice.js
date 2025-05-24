@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getOtherUsersThunk, getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk, updateProfileThunk } from './userThunk'
+import { deleteUserThunk, getOtherUsersThunk, getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk, updateProfileThunk } from './userThunk'
 
 const initialState = {
     isAuthenticated: false,
@@ -17,7 +17,17 @@ const userSlice = createSlice({
         setSelectedUser: (state, action) => {
             localStorage.setItem('selectedUser',JSON.stringify(action.payload))
             state.selectedUser = action.payload;
+        },
+
+        updateDeletedUser: (state, action) => {
+            const deletedUserId = action.payload;
+            state.otherUsers = state.otherUsers.filter(user => user._id !== deletedUserId);
+            if (state.selectedUser?._id === deletedUserId) {
+                state.selectedUser = null;
+                localStorage.removeItem('selectedUser');
+            }
         }
+
     },
     extraReducers: (builder) => {
         // Login 
@@ -63,6 +73,7 @@ const userSlice = createSlice({
             state.otherUsers = null;
             state.isAuthenticated = false;
             state.buttonLoading = false;
+            state.screenLoading = false;
             localStorage.clear();
         });
 
@@ -112,8 +123,27 @@ const userSlice = createSlice({
         builder.addCase(updateProfileThunk.rejected, (state, action) => {
             state.screenLoading = false;
         });
+
+        // delete account
+        builder.addCase(deleteUserThunk.pending, (state, action) => {
+            state.screenLoading = true;
+        });
+
+        builder.addCase(deleteUserThunk.fulfilled, (state, action) => {
+            state.userProfile = null;
+            state.selectedUser = null;
+            state.otherUsers = null;
+            state.isAuthenticated = false;
+            state.buttonLoading = false;
+            state.screenLoading = false;
+            localStorage.clear();
+        });
+
+        builder.addCase(deleteUserThunk.rejected, (state, action) => {
+            state.screenLoading = false;
+        });
     },
 })
-export const { setSelectedUser } = userSlice.actions;
+export const { setSelectedUser, updateDeletedUser } = userSlice.actions;
 
 export default userSlice.reducer

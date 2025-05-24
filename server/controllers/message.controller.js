@@ -109,8 +109,9 @@ export const clearChat = asyncHandler(async (req, res, next) => {
         });
     }
 
-    // Delete all messages associated with this conversation
+    // Delete all messages associated with this conversation and update in the other participant's UI
     await Message.deleteMany({ _id: { $in: conversation.messages } });
+    io.to(getSocketId(otherParticipantId)).emit('clearedChat');
 
     // Clear the messages array in the conversation document
     conversation.messages = [];

@@ -16,6 +16,10 @@ const messageSlice = createSlice({
             const oldMessages = state.messages ?? []; // if chatting with new user,the messages will be null so prevent it
             state.messages = [...oldMessages, action.payload]
         },
+
+        setMessages: (state) => {
+            state.messages = []; // if chatting with new user,the messages will be null so prevent it
+        }
     },
     extraReducers: (builder) => {
         // Send message
@@ -63,6 +67,6 @@ const messageSlice = createSlice({
 
     },
 })
-export const { setNewMessage } = messageSlice.actions;
+export const { setNewMessage, setMessages } = messageSlice.actions;
 
 export default messageSlice.reducer

@@ -101,3 +101,18 @@ export const updateProfileThunk = createAsyncThunk('user/updateProfile',
         }
     }
 );
+
+export const deleteUserThunk = createAsyncThunk('user/deleteUser',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.delete('/user/delete-user');
+            toast.success(response?.data?.message || "Account deletion successful");
+            return response.data;
+
+        } catch (error) {
+            const errorOutput = error?.response?.data?.errMessage;
+            toast.error(errorOutput);
+            return rejectWithValue(errorOutput)
+        }
+    }
+);
