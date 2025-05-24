@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket, setOnlineUsers } from "../../store/slice/socket/socketSlice";
 import SidebarSkeleton from "../skeletons/SideBarSkeleton";
+
 const UserSidebar = () => {
 
   const dispatch = useDispatch();
