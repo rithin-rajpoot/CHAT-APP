@@ -8,7 +8,8 @@ import {
 } from "../../store/slice/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket, setOnlineUsers } from "../../store/slice/socket/socketSlice";
-import SidebarSkeleton from "../skeletons/SideBarSkeleton";
+import SideBarSkeleton from "../skeletons/SideBarSkeleton";
+
 
 const UserSidebar = () => {
 
@@ -50,7 +51,7 @@ const UserSidebar = () => {
     navigate('/profile')
   }
 
-  if (screenLoading) return <SidebarSkeleton />;
+  if (screenLoading) return <SideBarSkeleton />;
 
   return (
     <div className="w-full md:max-w-[20rem] h-screen flex flex-col border-r border-r-primary/30">
