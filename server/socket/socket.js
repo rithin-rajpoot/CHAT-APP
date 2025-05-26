@@ -14,13 +14,13 @@ const io = new Server(server,
     {
         cors: {
             origin: process.env.CLIENT_URL,
+            credentials: true,
+            
         }
     }
 );
 
-const userSocketMap = {
-    //userId : socketId
-}
+const userSocketMap = new Map();
 
 io.on("connection", (socket) =>{
     const userId = socket.handshake.query.userId; // whenever a user connects from frontend, a query containing userId is recieved

@@ -8,6 +8,7 @@ const SendMsg = () => {
 
   const [message, setMessage] = useState("");
   const { selectedUser } = useSelector((state) => state.userReducer);
+  const { buttonLoading } = useSelector((state) => state.messageReducer);
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -22,7 +23,6 @@ const SendMsg = () => {
     }
   };
 
-
   return (
     <>
       <div className="w-full p-3 flex gap-2">
@@ -34,12 +34,16 @@ const SendMsg = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button
-          onClick={handleSendMessage}
-          className="btn btn-square btn-outline btn-primary"
-        >
-          <IoSend />
-        </button>
+        {buttonLoading ? (
+          <button className="btn btn-square loading loading-spinner loading-xs md:loading-sm"></button>
+        ) : (
+          <button
+            onClick={handleSendMessage}
+            className="btn btn-square btn-outline btn-primary"
+          >
+            <IoSend />
+          </button>
+        )}
       </div>
     </>
   );
