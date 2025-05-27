@@ -17,30 +17,11 @@ const MessageContainer = () => {
   const { selectedUser } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const [messageContainerHeight, setMessageContainerHeight] = useState(0);
-
-  useEffect(() => {
-    // Resize event to handle the height change on keyboard visibility
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   useEffect(() => {
     if (selectedUser?._id) {
       dispatch(getMessagesThunk({ receiverId: selectedUser?._id }));
     }
   }, [selectedUser?._id]);
-
-  useEffect(() => {
-    // Calculate the remaining height for the message container
-    const messageFooterHeight = 80; // Adjust as per your SendMsg component height
-    setMessageContainerHeight(windowHeight - 50 - messageFooterHeight); // 50px for the TopContainer
-  }, [windowHeight]);
 
   if (screenLoading) return <MessageSkeleton />;
   if (clearChatLoading) return <ClearingChatSkeleton />;
@@ -50,13 +31,12 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-[100dvh] flex flex-col">
           <div className="px-2 py-2 border-b border-b-primary/30">
             <TopContainer userDetails={selectedUser} />
           </div>
           <div
-            className="overflow-y-auto p-3"
-            style={{ height: messageContainerHeight }}
+            className="flex-1 overflow-y-auto p-3"
           >
             {messages?.length === 0 ? (
               <NoMessages />
