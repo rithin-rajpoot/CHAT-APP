@@ -107,7 +107,7 @@ npm run dev
 
 | **Profile Page**   |
 | ------------------ | 
-| ![image](https://github.com/user-attachments/assets/f7515c40-3d4e-4d2d-b4f1-7bb1336d79bc) | 
+| ![Screenshot 2025-05-27 235205](https://github.com/user-attachments/assets/c3170316-5f9f-4dbd-bd14-cbb529ff7518) | 
 
 | **Theme Switcher** |
 | ------------------ | 
