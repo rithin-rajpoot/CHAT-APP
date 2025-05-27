@@ -36,7 +36,7 @@ const MessageContainer = () => {
             <TopContainer userDetails={selectedUser} />
           </div>
           <div
-            className="overflow-y-auto p-3"
+            className="h-full overflow-y-auto p-3"
           >
             {messages?.length === 0 ? (
               <NoMessages />
