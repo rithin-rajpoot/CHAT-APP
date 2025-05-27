@@ -103,7 +103,7 @@ npm run dev
 
 | **Chat Interface** |  
 | ------------------ | 
-|  ![Screenshot 2025-05-27 235406](https://github.com/user-attachments/assets/920996b7-a208-4cd7-972e-95223526e63e) | 
+|  ![image](https://github.com/user-attachments/assets/dbfcec63-700c-4be3-b7de-a17585f9f5e7)| 
 
 | **Profile Page**   |
 | ------------------ | 
