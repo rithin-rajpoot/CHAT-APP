@@ -31,12 +31,12 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-[100dvh] flex flex-col">
+        <div className="w-full h-screen flex flex-col">
           <div className="px-2 py-2 border-b border-b-primary/30 sticky top-0 bg-base-100 z-10">
             <TopContainer userDetails={selectedUser} />
           </div>
           <div
-            className="flex-1 overflow-y-auto p-3"
+            className="overflow-y-auto p-3"
           >
             {messages?.length === 0 ? (
               <NoMessages />
