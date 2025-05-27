@@ -32,7 +32,7 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-[100dvh] flex flex-col">
           <div className="px-2 py-2 border-b border-b-primary/30">
             <TopContainer userDetails={selectedUser} />
           </div>
