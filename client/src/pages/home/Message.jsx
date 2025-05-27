@@ -16,7 +16,7 @@ const Message = ({ messageDetails }) => {
     if(messageRef.current){
       messageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  })
+  },[messageDetails]);
 
   return (
     <>
