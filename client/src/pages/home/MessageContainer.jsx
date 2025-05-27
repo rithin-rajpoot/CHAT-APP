@@ -9,6 +9,7 @@ import MessageSkeleton from "../skeletons/MessageSkeleton.jsx";
 import NoChatSelected from "./NoChatSelected.jsx";
 import ClearingChatSkeleton from "../skeletons/ClearingChatSkeleton.jsx";
 import NoMessages from "../skeletons/NoMessages.jsx";
+import { useState } from "react";
 
 const MessageContainer = () => {
   const { messages, screenLoading, clearChatLoading } = useSelector(
@@ -18,11 +19,24 @@ const MessageContainer = () => {
   const { selectedUser } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     if (selectedUser?._id) {
       dispatch(getMessagesThunk({ receiverId: selectedUser?._id }));
     }
   }, [selectedUser?._id]);
+  
 
   if (screenLoading) return <MessageSkeleton />;
   if (clearChatLoading) return <ClearingChatSkeleton />;
@@ -32,7 +46,7 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-[100dvh] flex flex-col">
+        <div className="w-full flex flex-col" style={{ height: windowHeight }}>
           <div className="px-2 py-2 border-b border-b-primary/30">
             <TopContainer userDetails={selectedUser} />
           </div>
