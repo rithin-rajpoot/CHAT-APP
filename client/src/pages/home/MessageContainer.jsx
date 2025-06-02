@@ -44,11 +44,11 @@ const MessageContainer = () => {
               messages
                 ?.filter(
                   (message) =>
-                    message.senderId === selectedUser._id ||
-                    message.receiverId === selectedUser._id
+                    message?.senderId === selectedUser._id ||
+                    message?.receiverId === selectedUser._id
                 )
                 .map((message) => (
-                  <Message key={message._id} messageDetails={message} />
+                  <Message key={message?._id} messageDetails={message} />
                 ))
             )}
           </div>

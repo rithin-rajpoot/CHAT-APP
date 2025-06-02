@@ -43,14 +43,12 @@ export const sendMessage = asyncHandler(
             image: imageUrl,
         });
         // Update the conversation with the new message
-        conversation.messages.push(newMessage._id); //pushing the new message in the created or existing conversation array (refer the model)
+        conversation.messages.push(newMessage._id); 
         await conversation.save();
 
         // web socket implementation
         io.to(getSocketId(receiverId)).emit('newMessage', newMessage);
-        io.to(getSocketId(senderId)).emit('newMessage', newMessage);
-
-
+        
         res.status(200).json({
             success: true,
             message: "Message sent successfully",

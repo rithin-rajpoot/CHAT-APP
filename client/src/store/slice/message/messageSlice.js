@@ -13,12 +13,12 @@ const messageSlice = createSlice({
     initialState,
     reducers: {
         setNewMessage:(state, action) => {
-            const oldMessages = state.messages ?? []; // if chatting with new user,the messages will be null so prevent it
+            const oldMessages = state.messages ?? [];
             state.messages = [...oldMessages, action.payload]
         },
 
         setMessages: (state) => {
-            state.messages = []; // if chatting with new user,the messages will be null so prevent it
+            state.messages = []; 
         }
     },
     extraReducers: (builder) => {
@@ -28,6 +28,8 @@ const messageSlice = createSlice({
         });
 
         builder.addCase(sendMessageThunk.fulfilled, (state, action) => { 
+            const oldMessages = state.messages ?? [];
+            state.messages = [...oldMessages, action.payload.responseData];
             state.buttonLoading = false;
         });
 
