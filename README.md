@@ -1,10 +1,15 @@
+
 # 🚀 ChatApp - Real-Time Messaging Application
 
 ## 📌 Overview
 
-ChatApp is a real-time chat application built with the MERN stack. It features secure authentication, WebSockets for instant messaging, and state management using Redux Toolkit.
+**ChatApp** is a deployed, full-featured real-time messaging application built with the MERN stack. It offers secure authentication, WebSocket-based instant messaging, multiple themes, responsive design for mobile users, and a dedicated profile page for each user. Redux Toolkit is used for seamless state management.
 
+---
 
+## 🌐 Live Demo
+
+🔗 [Visit Chat App](https://chat-app-bhh8.vercel.app)
 
 ---
 
@@ -12,33 +17,35 @@ ChatApp is a real-time chat application built with the MERN stack. It features s
 
 ### Frontend
 
-- ⚛️ **React.js** – Interactive UI
-- 🎨 **Tailwind CSS** – Responsive styling
-- 🗄 **Redux Toolkit** – State management
+* ⚛️ **React.js** – Interactive UI
+* 🎨 **Tailwind CSS** – Responsive styling
+* 🗄 **Redux Toolkit** – State management
 
 ### Backend
 
-- 🟢 **Node.js** – Server-side runtime
-- 🚀 **Express.js** – Backend framework
-- 🔐 **JWT** – Secure authentication
+* 🟢 **Node.js** – Server-side runtime
+* 🚀 **Express.js** – Backend framework
+* 🔐 **JWT** – Secure authentication
 
 ### Real-Time Communication
 
-- 🔄 **WebSockets (Socket.io)** – Instant messaging
+* 🔄 **WebSockets (Socket.io)** – Instant messaging
 
 ### Database
 
-- 🍃 **MongoDB (Local)\*\* – Local database (MongoDB)
+* 🍃 **MongoDB Atlas** – Cloud-based database storage
 
 ---
 
 ## ✨ Features
 
-✅ **Real-time messaging** via WebSockets\
-✅ **Secure login & authentication** using JWT\
-✅ **Responsive UI with Tailwind CSS**\
-✅ **State management with Redux Toolkit**\
-✅ **MongoDB Atlas for database storage**
+✅ **Real-time messaging** via WebSockets
+✅ **Secure login & authentication** using JWT
+✅ **Multiple themes** – Easily switch between light, dark, and other custom themes
+✅ **Mobile responsive design** – Fully optimized for all screen sizes
+✅ **User profile page** – View and update personal details
+✅ **Redux Toolkit** for efficient state management
+✅ **MongoDB Atlas** for scalable storage
 
 ---
 
@@ -48,7 +55,7 @@ ChatApp is a real-time chat application built with the MERN stack. It features s
 
 ```sh
 git clone https://github.com/rithin-rajpoot/CHAT-APP.git
-cd  CHAT-APP
+cd CHAT-APP
 ```
 
 ### 2️⃣ Install Dependencies
@@ -83,7 +90,7 @@ Run both frontend & backend:
 ```sh
 # Run backend
 cd server
-npm start ( or ) npm run dev
+npm start   # or npm run dev
 
 # Run frontend
 cd client
@@ -94,9 +101,18 @@ npm run dev
 
 ## 📸 Screenshots
 
-| **Chat Interface** |
-|![image](https://github.com/user-attachments/assets/aab518ea-f133-41fa-9c88-20cdb92837cd)
-                   |
+| **Chat Interface** |  
+| ------------------ | 
+|  ![image](https://github.com/user-attachments/assets/dbfcec63-700c-4be3-b7de-a17585f9f5e7)| 
+
+| **Profile Page**   |
+| ------------------ | 
+| ![Screenshot 2025-05-27 235205](https://github.com/user-attachments/assets/c3170316-5f9f-4dbd-bd14-cbb529ff7518) | 
+
+| **Theme Switcher** |
+| ------------------ | 
+|![Screenshot 2025-05-27 235151](https://github.com/user-attachments/assets/481be7f0-da78-4ecf-a5db-4a7757cf09b9) |
+
 
 ---
 
@@ -114,7 +130,8 @@ Want to improve ChatApp? Contributions are welcome! 🚀
 
 ## 📩 Contact & Support
 
-For queries, feel free to reach out:\
-📧 **Email:** [rajpootrithin@gmail.com](mailto\:rajpootrithin@gmail.com)\
-🔗 **LinkedIn:** [https://www.linkedin.com/in/rithin-rajpoot/](https://www.linkedin.com/in/rithin-rajpoot/)
+For queries, feel free to reach out:
+📧 **Email:** [rajpootrithin@gmail.com](mailto:rajpootrithin@gmail.com)
+🔗 **LinkedIn:** [Rithin Rajpoot](https://www.linkedin.com/in/rithin-rajpoot/)
 
+---
