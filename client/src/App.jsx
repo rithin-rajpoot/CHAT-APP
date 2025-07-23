@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserProfileThunk } from "./store/slice/user/userThunk";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Loader } from "lucide-react";
 
 // Lazy load components
 const Login = lazy(() => import("./pages/authentication/Login"));
@@ -32,6 +33,18 @@ const  App = () => {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", currTheme);
   }, [currTheme]);
+
+   const { screenLoading, isAuthenticated } = useSelector(
+    (state) => state.userReducer
+  );
+
+  if (screenLoading && !isAuthenticated)
+    return (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <Loader className="size-10 animate-spin text-black dark:text-white" />
+        <p>Loading...</p>
+      </div>
+    );
 
   return (
     <>

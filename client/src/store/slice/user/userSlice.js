@@ -65,6 +65,7 @@ const userSlice = createSlice({
         // Logout
         builder.addCase(logoutUserThunk.pending, (state, action) => {
             state.buttonLoading = true;
+            state.screenLoading = true;
         });
 
         builder.addCase(logoutUserThunk.fulfilled, (state, action) => {
