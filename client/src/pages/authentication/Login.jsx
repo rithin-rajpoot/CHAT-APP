@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center p-10 min-h-screen">
+    <div className="flex justify-center items-center p-10 min-h-[calc(100vh-4rem)]">
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Login</h2>
 

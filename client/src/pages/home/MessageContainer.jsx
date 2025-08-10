@@ -15,20 +15,17 @@ const MessageContainer = () => {
   const { messages, screenLoading, clearChatLoading } = useSelector(
     (state) => state.messageReducer
   );
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const observerRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
-  const { selectedUser, socket } = useSelector((state) => state.userReducer);
+  const { selectedUser, userProfile } = useSelector((state) => state.userReducer);
+  const { socket } = useSelector(state=> state.socketReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (selectedUser?._id) {
-      setPage(1);
-      setHasMore(true);
-      dispatch(getMessagesThunk({ receiverId: selectedUser?._id, page: 1 }))
+      dispatch(getMessagesThunk({ receiverId: selectedUser?._id }))
         .catch(error => {
           toast.error('Failed to load messages');
           console.error('Error loading messages:', error);
@@ -39,13 +36,17 @@ const MessageContainer = () => {
   useEffect(() => {
     if (socket) {
       socket.on('typing', ({ senderId }) => {
+        // console.log('Received typing event from:', senderId, 'selectedUser:', selectedUser?._id);
         if (senderId === selectedUser?._id) {
+          // console.log('Setting isTyping to true');
           setIsTyping(true);
         }
       });
 
       socket.on('stopTyping', ({ senderId }) => {
+        // console.log('Received stopTyping event from:', senderId, 'selectedUser:', selectedUser?._id);
         if (senderId === selectedUser?._id) {
+          // console.log('Setting isTyping to false');
           setIsTyping(false);
         }
       });
@@ -57,48 +58,33 @@ const MessageContainer = () => {
     }
   }, [socket, selectedUser]);
 
-  const loadMoreMessages = async () => {
-    if (!hasMore || screenLoading) return;
-    try {
-      const nextPage = page + 1;
-      const response = await dispatch(getMessagesThunk({ 
-        receiverId: selectedUser?._id, 
-        page: nextPage 
-      })).unwrap();
+  // Scroll to bottom when messages change or typing state changes
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isTyping]);
 
-      if (!response?.messages || response.messages.length < 20) {
-        setHasMore(false);
-      }
-      setPage(nextPage);
-    } catch (error) {
-      toast.error('Failed to load more messages');
-      console.error('Error loading more messages:', error);
+  // Centralized typing functions to pass down to SendMsg
+  const handleTyping = () => {
+    if (socket && selectedUser && userProfile) {
+      // console.log('Emitting typing event:', { senderId: userProfile._id, receiverId: selectedUser._id });
+      socket.emit('typing', { 
+        senderId: userProfile._id, 
+        receiverId: selectedUser._id 
+      });
     }
   };
 
-  useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 1.0
-    };
-
-    observerRef.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadMoreMessages();
-      }
-    }, options);
-
-    if (messagesEndRef.current) {
-      observerRef.current.observe(messagesEndRef.current);
+  const handleStopTyping = () => {
+    if (socket && selectedUser && userProfile) {
+      // console.log('Emitting stopTyping event:', { senderId: userProfile._id, receiverId: selectedUser._id });
+      socket.emit('stopTyping', { 
+        senderId: userProfile._id, 
+        receiverId: selectedUser._id 
+      });
     }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [hasMore, screenLoading]);
+  };
 
   const groupMessagesByDate = (messages) => {
     if (!Array.isArray(messages)) return {};
@@ -124,11 +110,16 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-full flex flex-col pb-10">
           <div className="px-2 py-2 border-b border-b-primary/30 sticky top-0 bg-base-100 z-10">
             <TopContainer userDetails={selectedUser} />
           </div>
-          <div className="h-full overflow-y-auto p-3">
+          <div 
+            ref={messagesContainerRef}
+            className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out ${
+              isTyping ? 'h-[calc(100%-2rem)] pb-6' : 'h-full pb-3'
+            }`}
+          >
             {!messages || messages.length === 0 ? (
               <NoMessages />
             ) : (
@@ -149,14 +140,16 @@ const MessageContainer = () => {
                 </div>
               ))
             )}
-            <div ref={messagesEndRef} />
+            {/* {console.log('isTyping state:', isTyping)} */}
             {isTyping && (
-              <div className="text-xs text-gray-500 italic">
-                {selectedUser?.username} is typing...
+              <div className="text-xs text-gray-500 italic animate-pulse">
+                {selectedUser?.fullName} is typing...
               </div>
             )}
+            {/* Invisible element to scroll to */}
+            <div ref={messagesEndRef} />
           </div>
-          <SendMsg />
+          <SendMsg onTyping={handleTyping} onStopTyping={handleStopTyping} />
         </div>
       )}
     </>

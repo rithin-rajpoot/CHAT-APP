@@ -12,11 +12,7 @@ const Message = ({ messageDetails }) => {
   );
   // console.log(userProfile?._id === messageDetails?.senderId) // sender aur user, me hi hoon
 
-  useEffect(() =>{
-    if(messageRef.current){
-      messageRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  },[messageDetails]);
+  // Removed individual scrollIntoView to prevent conflicts with container scrolling
 
   return (
     <>

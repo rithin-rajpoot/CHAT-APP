@@ -1,13 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { THEMES } from '../../components/utilities/themes.js';
-import { Send, ArrowLeft } from "lucide-react";
+import { Send } from "lucide-react";
 import { setCurrTheme } from '../../store/slice/themes/themeSlice';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { theme } = useSelector((state) => state.themeReducer);
 
   const PREVIEW_MESSAGES = [
@@ -22,21 +20,12 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-h-[100vh] container mx-auto px-4 pt-5 max-w-5xl">
+    <div className="min-h-[calc(100vh-4rem)] container mx-auto px-4 py-8 max-w-5xl">
       
       <div className="space-y-6">
-        <div className='flex items-center justify-between'>
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
           <p className="text-sm text-base-content/70">Choose a theme for your chat interface</p>
-        </div>
-         <button
-        onClick={() => navigate('/')}
-        className="flex items-center gap-2 text-sm font-medium hover:underline mb-4 cursor-pointer"
-      >
-        <ArrowLeft size={18} />
-        Back to Home
-      </button>
         </div>
         
 

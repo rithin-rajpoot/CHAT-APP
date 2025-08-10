@@ -62,7 +62,7 @@ const Home = () => {
   }, [socket]);
 
   return (
-     <div className="w-full h-screen flex">
+     <div className="w-full h-[calc(100vh-4rem)] flex">
       {/* Large screen - show both */}
       {!isMobile && (
         <>

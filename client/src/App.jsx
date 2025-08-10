@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserProfileThunk } from "./store/slice/user/userThunk";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Loader } from "lucide-react";
+import Navbar from "./components/Navbar";
 
 // Lazy load components
 const Login = lazy(() => import("./pages/authentication/Login"));
@@ -45,9 +46,11 @@ const App = () => {
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            <Route
+        <div className="min-h-screen bg-base-100">
+          <Navbar />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route
               path="/"
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -91,6 +94,7 @@ const App = () => {
             />
           </Routes>
         </Suspense>
+        </div>
       </BrowserRouter>
     </>
   );
