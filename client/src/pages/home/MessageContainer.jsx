@@ -8,7 +8,7 @@ import MessageSkeleton from "../skeletons/MessageSkeleton.jsx";
 import NoChatSelected from "./NoChatSelected.jsx";
 import ClearingChatSkeleton from "../skeletons/ClearingChatSkeleton.jsx";
 import NoMessages from "../skeletons/NoMessages.jsx";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import toast from "react-hot-toast";
 
 const MessageContainer = () => {
@@ -19,23 +19,26 @@ const MessageContainer = () => {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
-  const { selectedUser, userProfile } = useSelector((state) => state.userReducer);
-  const { socket } = useSelector(state=> state.socketReducer);
+  const { selectedUser, userProfile } = useSelector(
+    (state) => state.userReducer
+  );
+  const { socket } = useSelector((state) => state.socketReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (selectedUser?._id) {
-      dispatch(getMessagesThunk({ receiverId: selectedUser?._id }))
-        .catch(error => {
-          toast.error('Failed to load messages');
-          console.error('Error loading messages:', error);
-        });
+      dispatch(getMessagesThunk({ receiverId: selectedUser?._id })).catch(
+        (error) => {
+          toast.error("Failed to load messages");
+          console.error("Error loading messages:", error);
+        }
+      );
     }
   }, [selectedUser?._id]);
 
   useEffect(() => {
     if (socket) {
-      socket.on('typing', ({ senderId }) => {
+      socket.on("typing", ({ senderId }) => {
         // console.log('Received typing event from:', senderId, 'selectedUser:', selectedUser?._id);
         if (senderId === selectedUser?._id) {
           // console.log('Setting isTyping to true');
@@ -43,7 +46,7 @@ const MessageContainer = () => {
         }
       });
 
-      socket.on('stopTyping', ({ senderId }) => {
+      socket.on("stopTyping", ({ senderId }) => {
         // console.log('Received stopTyping event from:', senderId, 'selectedUser:', selectedUser?._id);
         if (senderId === selectedUser?._id) {
           // console.log('Setting isTyping to false');
@@ -52,8 +55,8 @@ const MessageContainer = () => {
       });
 
       return () => {
-        socket.off('typing');
-        socket.off('stopTyping');
+        socket.off("typing");
+        socket.off("stopTyping");
       };
     }
   }, [socket, selectedUser]);
@@ -61,7 +64,7 @@ const MessageContainer = () => {
   // Scroll to bottom when messages change or typing state changes
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isTyping]);
 
@@ -69,9 +72,9 @@ const MessageContainer = () => {
   const handleTyping = () => {
     if (socket && selectedUser && userProfile) {
       // console.log('Emitting typing event:', { senderId: userProfile._id, receiverId: selectedUser._id });
-      socket.emit('typing', { 
-        senderId: userProfile._id, 
-        receiverId: selectedUser._id 
+      socket.emit("typing", {
+        senderId: userProfile._id,
+        receiverId: selectedUser._id,
       });
     }
   };
@@ -79,19 +82,19 @@ const MessageContainer = () => {
   const handleStopTyping = () => {
     if (socket && selectedUser && userProfile) {
       // console.log('Emitting stopTyping event:', { senderId: userProfile._id, receiverId: selectedUser._id });
-      socket.emit('stopTyping', { 
-        senderId: userProfile._id, 
-        receiverId: selectedUser._id 
+      socket.emit("stopTyping", {
+        senderId: userProfile._id,
+        receiverId: selectedUser._id,
       });
     }
   };
 
   const groupMessagesByDate = (messages) => {
     if (!Array.isArray(messages)) return {};
-    
+
     const groups = {};
-    messages.forEach(message => {
-      const date = format(new Date(message.createdAt), 'yyyy-MM-dd');
+    messages.forEach((message) => {
+      const date = format(new Date(message.createdAt), "yyyy-MM-dd");
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -114,10 +117,10 @@ const MessageContainer = () => {
           <div className="px-2 py-2 border-b border-b-primary/30 sticky top-0 bg-base-100 z-10">
             <TopContainer userDetails={selectedUser} />
           </div>
-          <div 
+          <div
             ref={messagesContainerRef}
             className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out ${
-              isTyping ? 'h-[calc(100%-2rem)] pb-6' : 'h-full pb-3'
+              isTyping ? "h-[calc(100%-2rem)] pb-6" : "h-full pb-3"
             }`}
           >
             {!messages || messages.length === 0 ? (
@@ -126,7 +129,7 @@ const MessageContainer = () => {
               Object.entries(groupedMessages).map(([date, dateMessages]) => (
                 <div key={date} className="mb-4">
                   <div className="text-center text-xs text-gray-500 mb-2">
-                    {format(new Date(date), 'MMMM d, yyyy')}
+                    {format(new Date(date), "MMMM d, yyyy")}
                   </div>
                   {dateMessages
                     .filter(
@@ -142,11 +145,18 @@ const MessageContainer = () => {
             )}
             {/* {console.log('isTyping state:', isTyping)} */}
             {isTyping && (
-              <div className="text-xs text-gray-500 italic animate-pulse">
+              <div className="text-xs text-gray-500 italic animate-pulse flex gap-2 mb-2 items-center">
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <img
+                      alt="Tailwind CSS chat bubble component"
+                      src={selectedUser.avatar || "/avatar.png"}
+                    />
+                  </div>
+                </div>
                 {selectedUser?.fullName} is typing...
               </div>
             )}
-            {/* Invisible element to scroll to */}
             <div ref={messagesEndRef} />
           </div>
           <SendMsg onTyping={handleTyping} onStopTyping={handleStopTyping} />
