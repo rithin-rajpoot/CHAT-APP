@@ -8,13 +8,13 @@ import { io } from '../socket/socket.js';
 
 export const register = asyncHandler(
     async (req, res, next) => {
-        const { fullName, username, password, gender } = req.body;
+        const { fullName, email, password, gender } = req.body;
         // const user = new User({ fullName, email, password });
-        if (!fullName || !username || !password || !gender) {
+        if (!fullName || !email || !password || !gender) {
            return next(new errorHandler("All fields are required",400))
         }
 
-        const user = await User.findOne({username});
+        const user = await User.findOne({email});
         if(user) {
             return next(new errorHandler("User already exists",400))
         }
@@ -23,7 +23,7 @@ export const register = asyncHandler(
 
         const newUser = await User.create({ //creates and saves the user
             fullName,
-            username,
+            email,
             password: hashedPassword,
             gender,
         })
@@ -50,19 +50,19 @@ export const register = asyncHandler(
 
 export const login = asyncHandler(
     async (req, res, next) => {
-        const { username, password } = req.body;
-        if (!username || !password) {
-           return next(new errorHandler("Your password or username is empty",400))
+        const { email, password } = req.body;
+        if (!email || !password) {
+           return next(new errorHandler("Your password or email is empty",400))
         }
 
-        const user = await User.findOne({username})
+        const user = await User.findOne({email})
         if(!user) {
-            return next(new errorHandler("Your password or username is Invalid!",400))
+            return next(new errorHandler("Your password or email is Invalid!",400))
         }
 
         const isValidPassword = await bcrypt.compare(password, user.password);
         if(!isValidPassword) {
-            return next(new errorHandler("Your password or username is Invalid!",400))
+            return next(new errorHandler("Your password or email is Invalid!",400))
         }
 
         // Generate and send JWT

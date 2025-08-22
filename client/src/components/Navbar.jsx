@@ -112,27 +112,28 @@ const Navbar = () => {
                 {/* Profile Button */}
                 <button
                   onClick={handleHomeClick}
-                  className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200 transition-colors cursor-pointer"
                 >
                   <Home size={18} />
                   Home
                 </button>
 
                 {/* Settings Button */}
-                <button
+                {/* <button
                   onClick={handleSettingsClick}
                   className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200 transition-colors"
                 >
                   <Settings size={18} />
                   Settings
-                </button>
+                </button> */}
 
                 {/* User Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200 transition-colors cursor-pointer"
                   >
+                    <span className="hidden lg:block">{userProfile?.fullName}</span>
                     <div className="avatar">
                       <div className="w-8 h-8 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
                         <img
@@ -142,7 +143,7 @@ const Navbar = () => {
                         />
                       </div>
                     </div>
-                    <span className="hidden lg:block">{userProfile?.fullName}</span>
+
                   </button>
 
                   {/* Dropdown Menu */}

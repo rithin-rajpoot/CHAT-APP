@@ -4,10 +4,10 @@ import { axiosInstance } from '../../../components/utilities/axiosInstance.js'
 
 
 export const loginUserThunk = createAsyncThunk('user/login',
-    async ({ username, password }, { rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post('/user/login',{
-                username,
+                email,
                 password
             });
             toast.success("Login successful")
@@ -22,11 +22,11 @@ export const loginUserThunk = createAsyncThunk('user/login',
 );
 
 export const registerUserThunk = createAsyncThunk('user/register',
-    async ({ fullName, username, password, confirmPassword, gender }, { rejectWithValue }) => {
+    async ({ fullName, email, password, confirmPassword, gender }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post('/user/register',{
                 fullName,
-                username,
+                email,
                 password,
                 confirmPassword,
                 gender

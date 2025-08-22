@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaEnvelope } from "react-icons/fa";
 import { FaKey } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserThunk } from "../../store/slice/user/userThunk";
@@ -16,6 +17,7 @@ const Signup = () => {
   const [signupData, setSignupData] = useState({
     fullName: "",
     username: "",
+    email: "",
     password: "",
     confirmPassword: "",
     gender: "male",
@@ -24,6 +26,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({
     fullName: "",
     username: "",
+    email: "",
     password: "",
     confirmPassword: "",
     gender: "",
@@ -40,6 +43,7 @@ const Signup = () => {
     const newErrors = {
       fullName: "",
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
       gender: "",
@@ -60,6 +64,18 @@ const Signup = () => {
       isValid = false;
     } else if (signupData.username.length < 3) {
       newErrors.username = "Username must be at least 3 characters";
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9_]+$/.test(signupData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, and underscores";
+      isValid = false;
+    }
+
+    // Email validation
+    if (!signupData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupData.email)) {
+      newErrors.email = "Please enter a valid email address";
       isValid = false;
     }
 
@@ -101,10 +117,26 @@ const Signup = () => {
     }
   };
 
+  const handleGoogleSignup = () => {
+    // Redirect to your backend Google OAuth endpoint
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
+
   return (
     <div className="flex justify-center items-center p-10 min-h-[calc(100vh-4rem)]">
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
-        <h2 className="text-2xl text-center font-semibold">Signup</h2>
+        <h2 className="text-2xl text-center font-semibold">Sign Up</h2>
+
+        {/* Google Signup Button */}
+        <button
+          onClick={handleGoogleSignup}
+          className="btn btn-outline w-full flex items-center gap-3"
+        >
+          <FcGoogle size={20} />
+          Continue with Google
+        </button>
+
+        <div className="divider">OR</div>
 
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
@@ -137,6 +169,23 @@ const Signup = () => {
           </label>
           {errors.username && (
             <span className="text-error text-sm">{errors.username}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="input flex items-center gap-2 w-full">
+            <FaEnvelope />
+            <input
+              type="email"
+              name="email"
+              className={`grow ${errors.email ? "border-error" : ""}`}
+              placeholder="Email"
+              onChange={handleInputChange}
+              value={signupData.email}
+            />
+          </label>
+          {errors.email && (
+            <span className="text-error text-sm">{errors.email}</span>
           )}
         </div>
 
@@ -185,7 +234,7 @@ const Signup = () => {
               defaultChecked
               onChange={handleInputChange}
             />
-            male
+            Male
           </label>
           <label htmlFor="female">
             <input
@@ -196,7 +245,7 @@ const Signup = () => {
               className="radio radio-primary mr-2"
               onChange={handleInputChange}
             />
-            female
+            Female
           </label>
         </div>
 
@@ -208,9 +257,9 @@ const Signup = () => {
           <button 
             onClick={handleSignup} 
             className="btn btn-primary"
-            disabled={!signupData.fullName || !signupData.username || !signupData.password || !signupData.confirmPassword}
+            disabled={!signupData.fullName || !signupData.username || !signupData.email || !signupData.password || !signupData.confirmPassword}
           >
-            Signup
+            Sign Up
           </button>
         )}
 

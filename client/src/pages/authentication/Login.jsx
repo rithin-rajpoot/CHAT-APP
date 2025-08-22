@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaEnvelope } from "react-icons/fa";
 import { FaKey } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUserThunk } from "../../store/slice/user/userThunk";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,12 +15,12 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -33,16 +34,16 @@ const Login = () => {
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
-      username: "",
+      email: "",
       password: "",
     };
 
-    // Username validation
-    if (!loginData.username.trim()) {
-      newErrors.username = "Username is required";
+    // Email validation
+    if (!loginData.email.trim()) {
+      newErrors.email = "Email is required";
       isValid = false;
-    } else if (loginData.username.length < 3) {
-      newErrors.username = "Username must be at least 3 characters";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginData.email)) {
+      newErrors.email = "Please enter a valid email address";
       isValid = false;
     }
 
@@ -75,25 +76,41 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    // Redirect to your backend Google OAuth endpoint
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
+
   return (
     <div className="flex justify-center items-center p-10 min-h-[calc(100vh-4rem)]">
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Login</h2>
 
+        {/* Google Login Button */}
+        <button
+          onClick={handleGoogleLogin}
+          className="btn btn-outline w-full flex items-center gap-3"
+        >
+          <FcGoogle size={20} />
+          Continue with Google
+        </button>
+
+        <div className="divider">OR</div>
+
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
-            <FaUser />
+            <FaEnvelope />
             <input
-              type="text"
-              name="username"
-              className={`grow ${errors.username ? "border-error" : ""}`}
-              placeholder="Username"
+              type="email"
+              name="email"
+              className={`grow ${errors.email ? "border-error" : ""}`}
+              placeholder="Email"
               onChange={handleInputChange}
-              value={loginData.username}
+              value={loginData.email}
             />
           </label>
-          {errors.username && (
-            <span className="text-error text-sm">{errors.username}</span>
+          {errors.email && (
+            <span className="text-error text-sm">{errors.email}</span>
           )}
         </div>
 
@@ -122,7 +139,7 @@ const Login = () => {
           <button 
             onClick={handleLogin} 
             className="btn btn-primary"
-            disabled={!loginData.username || !loginData.password}
+            disabled={!loginData.email || !loginData.password}
           >
             Login
           </button>
