@@ -116,3 +116,23 @@ export const deleteUserThunk = createAsyncThunk('user/deleteUser',
         }
     }
 );
+
+export const googleAuthThunk = createAsyncThunk(
+    'user/googleAuth',
+    async ({ credential }, { rejectWithValue }) => {
+        try {
+            // Send Google credential (ID token) to backend
+            const response = await axiosInstance.post('/auth/google', {
+                credential,
+            });
+            
+            toast.success("Google login successful!");
+            return response.data;
+
+        } catch (error) {
+            const errorOutput = error?.response?.data?.errMessage || "Google login failed";
+            toast.error(errorOutput);
+            return rejectWithValue(errorOutput);
+        }
+    }
+);

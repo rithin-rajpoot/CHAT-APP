@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { deleteUserThunk, getOtherUsersThunk, getUserProfileThunk, loginUserThunk, logoutUserThunk, registerUserThunk, updateProfileThunk } from './userThunk'
+import { deleteUserThunk, getOtherUsersThunk, getUserProfileThunk, googleAuthThunk, loginUserThunk, logoutUserThunk, registerUserThunk, updateProfileThunk } from './userThunk'
 
 const initialState = {
     isAuthenticated: false,
@@ -15,7 +15,7 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setSelectedUser: (state, action) => {
-            localStorage.setItem('selectedUser',JSON.stringify(action.payload))
+            localStorage.setItem('selectedUser', JSON.stringify(action.payload))
             state.selectedUser = action.payload;
         },
 
@@ -35,13 +35,13 @@ const userSlice = createSlice({
             state.buttonLoading = true;
         });
 
-        builder.addCase(loginUserThunk.fulfilled, (state, action) => { 
-            state.userProfile = action.payload?.responseData?.user 
+        builder.addCase(loginUserThunk.fulfilled, (state, action) => {
+            state.userProfile = action.payload?.responseData?.user
             state.isAuthenticated = true;
             state.buttonLoading = false;
         });
 
-        builder.addCase(loginUserThunk.rejected, (state, action) => { 
+        builder.addCase(loginUserThunk.rejected, (state, action) => {
             state.buttonLoading = false;
         });
 
@@ -142,6 +142,21 @@ const userSlice = createSlice({
 
         builder.addCase(deleteUserThunk.rejected, (state, action) => {
             state.screenLoading = false;
+        });
+
+        // Google Login
+        builder.addCase(googleAuthThunk.pending, (state) => {
+            state.buttonLoading = true;
+        });
+
+        builder.addCase(googleAuthThunk.fulfilled, (state, action) => {
+            state.userProfile = action.payload?.responseData?.user;
+            state.isAuthenticated = true;
+            state.buttonLoading = false;
+        });
+
+        builder.addCase(googleAuthThunk.rejected, (state) => {
+            state.buttonLoading = false;
         });
     },
 })

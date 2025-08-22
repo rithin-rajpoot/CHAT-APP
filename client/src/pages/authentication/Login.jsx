@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { FaUser, FaEnvelope } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaEnvelope } from "react-icons/fa";
 import { FaKey } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUserThunk } from "../../store/slice/user/userThunk";
+import { googleAuthThunk, loginUserThunk } from "../../store/slice/user/userThunk";
 import { useDispatch, useSelector } from "react-redux";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const { isAuthenticated, buttonLoading } = useSelector(
@@ -76,24 +76,26 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Redirect to your backend Google OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-  };
-
   return (
     <div className="flex justify-center items-center p-10 min-h-[calc(100vh-4rem)]">
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Login</h2>
 
         {/* Google Login Button */}
-        <button
-          onClick={handleGoogleLogin}
-          className="btn btn-outline w-full flex items-center gap-3"
-        >
-          <FcGoogle size={20} />
-          Continue with Google
-        </button>
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            const credential = credentialResponse?.credential;
+            if (credential) {
+              const response = await dispatch(googleAuthThunk({ credential }));
+              if (response?.payload?.success) {
+                navigate("/");
+              }
+            }
+          }}
+          onError={() => {
+            console.log("Google login failed");
+          }}
+        />
 
         <div className="divider">OR</div>
 
@@ -136,8 +138,8 @@ const Login = () => {
             <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>
           </button>
         ) : (
-          <button 
-            onClick={handleLogin} 
+          <button
+            onClick={handleLogin}
             className="btn btn-primary"
             disabled={!loginData.email || !loginData.password}
           >

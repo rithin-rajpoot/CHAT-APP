@@ -4,8 +4,12 @@ import { FaKey } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUserThunk } from "../../store/slice/user/userThunk";
-import toast from "react-hot-toast";
+import {
+  googleAuthThunk,
+  registerUserThunk,
+} from "../../store/slice/user/userThunk";
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -66,7 +70,8 @@ const Signup = () => {
       newErrors.username = "Username must be at least 3 characters";
       isValid = false;
     } else if (!/^[a-zA-Z0-9_]+$/.test(signupData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, and underscores";
+      newErrors.username =
+        "Username can only contain letters, numbers, and underscores";
       isValid = false;
     }
 
@@ -117,25 +122,23 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleSignup = () => {
-    // Redirect to your backend Google OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
-  };
-
   return (
     <div className="flex justify-center items-center p-10 min-h-[calc(100vh-4rem)]">
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Sign Up</h2>
 
         {/* Google Signup Button */}
-        <button
-          onClick={handleGoogleSignup}
-          className="btn btn-outline w-full flex items-center gap-3"
-        >
-          <FcGoogle size={20} />
-          Continue with Google
-        </button>
-
+        <GoogleLogin
+          onSuccess={(credentialResponse) => {
+            const credential = credentialResponse?.credential;
+            if (credential) {
+              dispatch(googleAuthThunk({ credential }));
+            }
+          }}
+          onError={() => {
+            console.log("Google Signup failed");
+          }}
+        />
         <div className="divider">OR</div>
 
         <div className="flex flex-col gap-1">
@@ -254,10 +257,16 @@ const Signup = () => {
             <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>
           </button>
         ) : (
-          <button 
-            onClick={handleSignup} 
+          <button
+            onClick={handleSignup}
             className="btn btn-primary"
-            disabled={!signupData.fullName || !signupData.username || !signupData.email || !signupData.password || !signupData.confirmPassword}
+            disabled={
+              !signupData.fullName ||
+              !signupData.username ||
+              !signupData.email ||
+              !signupData.password ||
+              !signupData.confirmPassword
+            }
           >
             Sign Up
           </button>

@@ -40,6 +40,9 @@ app.use('/api/v1/user', userRoute)
 import messageRoute from './routes/message.route.js';
 app.use('/api/v1/message', messageRoute)
 
+import authRoute from "./routes/auth.route.js";
+app.use("/api/v1/auth", authRoute);
+
 
 //Error handling middleware
 import { errorMiddleware } from './middlewares/error.middleware.js';
