@@ -109,6 +109,8 @@ export const logout = asyncHandler(
         .cookie("token","", {
             expires: new Date(Date.now()),
             httpOnly: true,
+            secure: true,
+            sameSite: 'none'
         })
         .json({
             success: true,

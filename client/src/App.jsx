@@ -25,20 +25,23 @@ const LoadingSpinner = () => (
 const App = () => {
   const dispatch = useDispatch();
   const { currTheme } = useSelector((state) => state.themeReducer);
+  const { screenLoading, isAuthenticated } = useSelector(
+    (state) => state.userReducer
+  );
 
   useEffect(() => {
-    (async () => {
-      await dispatch(getUserProfileThunk());
-    })();
-  }, [dispatch]);
+    // Only try to get user profile if we're not already authenticated
+    // This prevents auto-login after logout
+    if (!isAuthenticated) {
+      (async () => {
+        await dispatch(getUserProfileThunk());
+      })();
+    }
+  }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", currTheme);
   }, [currTheme]);
-
-  const { screenLoading, isAuthenticated } = useSelector(
-    (state) => state.userReducer
-  );
 
   if (screenLoading && !isAuthenticated) return <LoadingSpinner />;
 
