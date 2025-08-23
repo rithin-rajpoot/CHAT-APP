@@ -8,8 +8,7 @@ import {
   googleAuthThunk,
   registerUserThunk,
 } from "../../store/slice/user/userThunk";
-import { GoogleLogin } from "@react-oauth/google";
-import axios from "axios";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -42,6 +41,22 @@ const Signup = () => {
     }
   }, [isAuthenticated]);
 
+  // ✅ Google Signup Handler
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const credential = tokenResponse?.credential || tokenResponse?.access_token;
+      if (credential) {
+        const response = await dispatch(googleAuthThunk({ credential }));
+        if (response?.payload?.success) {
+          navigate("/");
+        }
+      }
+    },
+    onError: () => {
+      console.log("Google signup failed");
+    },
+  });
+
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
@@ -53,7 +68,6 @@ const Signup = () => {
       gender: "",
     };
 
-    // Full Name validation
     if (!signupData.fullName.trim()) {
       newErrors.fullName = "Full name is required";
       isValid = false;
@@ -62,7 +76,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Username validation
     if (!signupData.username.trim()) {
       newErrors.username = "Username is required";
       isValid = false;
@@ -75,7 +88,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Email validation
     if (!signupData.email.trim()) {
       newErrors.email = "Email is required";
       isValid = false;
@@ -84,7 +96,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Password validation
     if (!signupData.password) {
       newErrors.password = "Password is required";
       isValid = false;
@@ -93,7 +104,6 @@ const Signup = () => {
       isValid = false;
     }
 
-    // Confirm Password validation
     if (!signupData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
       isValid = false;
@@ -109,7 +119,6 @@ const Signup = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSignupData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -127,34 +136,20 @@ const Signup = () => {
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Sign Up</h2>
 
-        {/* Google Signup Button */}
-       <div className="w-full flex justify-center">
-          <div className="w-full">
-            <GoogleLogin
-              onSuccess={async (credentialResponse) => {
-                const credential = credentialResponse?.credential;
-                if (credential) {
-                  const response = await dispatch(googleAuthThunk({ credential }));
-                  if (response?.payload?.success) {
-                    navigate("/");
-                  }
-                }
-              }}
-              onError={() => {
-                console.log("Google login failed");
-              }}
-              width="100%"
-              size="large"
-              theme="outline"
-              shape="rectangular"
-              logo_alignment="left"
-              text="signin_with"
-            />
-          </div>
+        {/* ✅ Custom Google Signup Button */}
+        <div className="w-full flex justify-center">
+          <button
+            onClick={() => googleLogin()}
+            className="flex items-center justify-center gap-3 w-full bg-white border border-gray-300 rounded-lg shadow-md py-2 px-4 hover:bg-gray-100 transition duration-200"
+          >
+            <FcGoogle size={22} />
+            <span className="font-medium text-gray-700">Sign up with Google</span>
+          </button>
         </div>
 
         <div className="divider">OR</div>
 
+        {/* Full Name */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaUser />
@@ -172,6 +167,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Username */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaUser />
@@ -189,6 +185,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Email */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaEnvelope />
@@ -206,6 +203,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Password */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaKey />
@@ -223,6 +221,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Confirm Password */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaKey />
@@ -240,6 +239,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Gender */}
         <div className="flex items-center gap-5 w-full">
           <label htmlFor="male">
             <input
@@ -266,6 +266,7 @@ const Signup = () => {
           </label>
         </div>
 
+        {/* Signup Button */}
         {buttonLoading ? (
           <button className="btn btn-primary">
             <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>

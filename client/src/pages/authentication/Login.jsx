@@ -4,7 +4,8 @@ import { FaKey } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { googleAuthThunk, loginUserThunk } from "../../store/slice/user/userThunk";
 import { useDispatch, useSelector } from "react-redux";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc"; // Google icon
 
 const Login = () => {
   const { isAuthenticated, buttonLoading } = useSelector(
@@ -24,21 +25,33 @@ const Login = () => {
     password: "",
   });
 
-  // to redirect the user to the home page when the user is logged in
+  // Redirect when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
     }
   }, [isAuthenticated]);
 
+  // Google Login Handler
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const credential = tokenResponse?.credential || tokenResponse?.access_token;
+      if (credential) {
+        const response = await dispatch(googleAuthThunk({ credential }));
+        if (response?.payload?.success) {
+          navigate("/");
+        }
+      }
+    },
+    onError: () => {
+      console.log("Google login failed");
+    },
+  });
+  //  Validation
   const validateForm = () => {
     let isValid = true;
-    const newErrors = {
-      email: "",
-      password: "",
-    };
+    const newErrors = { email: "", password: "" };
 
-    // Email validation
     if (!loginData.email.trim()) {
       newErrors.email = "Email is required";
       isValid = false;
@@ -47,7 +60,6 @@ const Login = () => {
       isValid = false;
     }
 
-    // Password validation
     if (!loginData.password) {
       newErrors.password = "Password is required";
       isValid = false;
@@ -60,13 +72,14 @@ const Login = () => {
     return isValid;
   };
 
+  // Input change handler
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  // Login with email/password
   const handleLogin = async () => {
     if (validateForm()) {
       const response = await dispatch(loginUserThunk(loginData));
@@ -81,34 +94,20 @@ const Login = () => {
       <div className="h-full flex max-w-[40rem] w-full flex-col gap-6 bg-base-300 rounded-lg p-6">
         <h2 className="text-2xl text-center font-semibold">Login</h2>
 
-        {/* Google Login Button */}
+        {/* Custom Google Login Button */}
         <div className="w-full flex justify-center">
-          <div className="w-full">
-            <GoogleLogin
-              onSuccess={async (credentialResponse) => {
-                const credential = credentialResponse?.credential;
-                if (credential) {
-                  const response = await dispatch(googleAuthThunk({ credential }));
-                  if (response?.payload?.success) {
-                    navigate("/");
-                  }
-                }
-              }}
-              onError={() => {
-                console.log("Google login failed");
-              }}
-              width="100%"
-              size="large"
-              theme="outline"
-              shape="rectangular"
-              logo_alignment="left"
-              text="signin_with"
-            />
-          </div>
+          <button
+            onClick={() => googleLogin()}
+            className="flex items-center justify-center gap-3 w-full bg-white border border-gray-300 rounded-lg shadow-md py-2 px-4 hover:bg-gray-100 transition duration-200"
+          >
+            <FcGoogle size={22} />
+            <span className="font-medium text-gray-700">Sign in with Google</span>
+          </button>
         </div>
 
         <div className="divider">OR</div>
 
+        {/* Email Input */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaEnvelope />
@@ -126,6 +125,7 @@ const Login = () => {
           )}
         </div>
 
+        {/* Password Input */}
         <div className="flex flex-col gap-1">
           <label className="input flex items-center gap-2 w-full">
             <FaKey />
@@ -143,6 +143,7 @@ const Login = () => {
           )}
         </div>
 
+        {/* Login Button */}
         {buttonLoading ? (
           <button className="btn btn-primary">
             <span className="loading loading-spinner loading-xs md:loading-sm lg:loading-md"></span>
