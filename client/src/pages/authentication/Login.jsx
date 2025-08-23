@@ -82,20 +82,30 @@ const Login = () => {
         <h2 className="text-2xl text-center font-semibold">Login</h2>
 
         {/* Google Login Button */}
-        <GoogleLogin
-          onSuccess={async (credentialResponse) => {
-            const credential = credentialResponse?.credential;
-            if (credential) {
-              const response = await dispatch(googleAuthThunk({ credential }));
-              if (response?.payload?.success) {
-                navigate("/");
-              }
-            }
-          }}
-          onError={() => {
-            console.log("Google login failed");
-          }}
-        />
+        <div className="w-full flex justify-center">
+          <div className="w-full">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                const credential = credentialResponse?.credential;
+                if (credential) {
+                  const response = await dispatch(googleAuthThunk({ credential }));
+                  if (response?.payload?.success) {
+                    navigate("/");
+                  }
+                }
+              }}
+              onError={() => {
+                console.log("Google login failed");
+              }}
+              width="100%"
+              size="large"
+              theme="outline"
+              shape="rectangular"
+              logo_alignment="left"
+              text="signin_with"
+            />
+          </div>
+        </div>
 
         <div className="divider">OR</div>
 

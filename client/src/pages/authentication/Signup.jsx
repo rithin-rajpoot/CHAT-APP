@@ -128,17 +128,31 @@ const Signup = () => {
         <h2 className="text-2xl text-center font-semibold">Sign Up</h2>
 
         {/* Google Signup Button */}
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const credential = credentialResponse?.credential;
-            if (credential) {
-              dispatch(googleAuthThunk({ credential }));
-            }
-          }}
-          onError={() => {
-            console.log("Google Signup failed");
-          }}
-        />
+       <div className="w-full flex justify-center">
+          <div className="w-full">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                const credential = credentialResponse?.credential;
+                if (credential) {
+                  const response = await dispatch(googleAuthThunk({ credential }));
+                  if (response?.payload?.success) {
+                    navigate("/");
+                  }
+                }
+              }}
+              onError={() => {
+                console.log("Google login failed");
+              }}
+              width="100%"
+              size="large"
+              theme="outline"
+              shape="rectangular"
+              logo_alignment="left"
+              text="signin_with"
+            />
+          </div>
+        </div>
+
         <div className="divider">OR</div>
 
         <div className="flex flex-col gap-1">
