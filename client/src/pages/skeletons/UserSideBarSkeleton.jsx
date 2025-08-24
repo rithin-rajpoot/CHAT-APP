@@ -9,15 +9,6 @@ const UserSideBarSkeleton = () => {
       className="h-full w-full md:max-w-[20rem] border-r border-base-300 
     flex flex-col transition-all duration-200"
     >
-      {/* Header */}
-      <div className="border-b border-base-300 w-full p-5">
-        <div className="flex items-center gap-2">
-          <h1 className="w-full mx-3 mt-2 rounded-lg bg-primary/30 text-xl font-bold px-3 py-1 text-center">
-        GUP SHUP
-      </h1>
-        </div>
-      </div>
-
       {/* Skeleton Contacts */}
       <div className="overflow-y-auto w-full py-3">
         {skeletonContacts.map((_, idx) => (
