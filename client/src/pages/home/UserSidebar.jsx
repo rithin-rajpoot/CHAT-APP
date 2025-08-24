@@ -8,7 +8,6 @@ import {
 } from "../../store/slice/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket } from "../../store/slice/socket/socketSlice";
-import { setMessages } from "../../store/slice/message/messageSlice";
 import UserSideBarSkeleton from "../skeletons/UserSideBarSkeleton";
 
 
@@ -25,7 +24,6 @@ const UserSidebar = () => {
   const handleLogout = async () => {
     await dispatch(logoutUserThunk());
     dispatch(disconnectSocket());
-    dispatch(setMessages()); // Clear messages state
     navigate("/login");
   };
 

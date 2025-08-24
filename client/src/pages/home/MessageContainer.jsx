@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMessagesThunk } from "../../store/slice/message/messageThunk.js";
-import { setMessages } from "../../store/slice/message/messageSlice.js";
 import Message from "./Message.jsx";
 import SendMsg from "./SendMsg.jsx";
 import TopContainer from "./TopContainer.jsx";
@@ -28,18 +27,12 @@ const MessageContainer = () => {
 
   useEffect(() => {
     if (selectedUser?._id) {
-      // Clear previous messages when switching to a different user
-      dispatch(setMessages());
-      
       dispatch(getMessagesThunk({ receiverId: selectedUser?._id })).catch(
         (error) => {
           toast.error("Failed to load messages");
           console.error("Error loading messages:", error);
         }
       );
-    } else {
-      // Clear messages when no user is selected
-      dispatch(setMessages());
     }
   }, [selectedUser?._id]);
 
@@ -138,7 +131,13 @@ const MessageContainer = () => {
                   <div className="text-center text-xs text-gray-500 mb-2">
                     {format(new Date(date), "MMMM d, yyyy")}
                   </div>
-                  {dateMessages.map((message) => (
+                  {dateMessages
+                    .filter(
+                      (message) =>
+                        message?.senderId === selectedUser._id ||
+                        message?.receiverId === selectedUser._id
+                    )
+                    .map((message) => (
                       <Message key={message?._id} messageDetails={message} />
                     ))}
                 </div>
