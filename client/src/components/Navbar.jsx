@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { User, Settings, LogOut, Menu, X, Trash2, Home } from "lucide-react";
 import { logoutUserThunk, deleteUserThunk } from "../store/slice/user/userThunk";
 import { disconnectSocket } from "../store/slice/socket/socketSlice";
+import { setMessages } from "../store/slice/message/messageSlice";
 import DeleteAccountConfirmation from "./DeleteAccountConfirmation";
 
 const Navbar = () => {
@@ -33,6 +34,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await dispatch(logoutUserThunk());
     dispatch(disconnectSocket());
+    dispatch(setMessages()); // Clear messages state
     navigate("/login");
     setIsDropdownOpen(false);
   };
