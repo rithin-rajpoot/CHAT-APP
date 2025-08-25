@@ -43,12 +43,12 @@ export const sendMessage = asyncHandler(
             image: imageUrl,
         });
         // Update the conversation with the new message
-        conversation.messages.push(newMessage._id); 
+        conversation.messages.push(newMessage._id);
         await conversation.save();
 
         // web socket implementation
         io.to(getSocketId(receiverId)).emit('newMessage', newMessage);
-        
+
         res.status(200).json({
             success: true,
             message: "Message sent successfully",
@@ -69,20 +69,42 @@ export const getConversationMessages = asyncHandler(
 
 
 
+        // find the conversation first
         const conversation = await Conversation.findOne({
-            participants: { $all: [myId, otherParticipantId] }, // returns the conversation which contains both sender and receiver 
-        }).populate('messages');
-
+            participants: { $all: [myId, otherParticipantId] },
+        });
         if (!conversation) {
             return res.status(200).json({
                 success: true,
-                responseData: [],
+                messages: [],
+                nextCursor: null,
             });
         }
 
+        // pagination params
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50); // default limit is 20, max limit is 50
+        const cursor = req.query.cursor; // ISO date string (createdAt)
+
+        // build query for messages
+        // build query for messages - query by message IDs in the conversation
+        const query = { _id: { $in: conversation.messages } };
+        if (cursor) {
+            query.createdAt = { $lt: new Date(cursor) };
+        }
+
+        const docs = await Message.find(query)
+            .sort({ createdAt: -1 }) // newest -> oldest
+            .limit(limit + 1);
+
+        const hasMore = docs.length > limit;
+        const items = hasMore ? docs.slice(0, limit) : docs;
+
+        const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
+
         res.status(201).json({
             success: true,
-            responseData: conversation,
+            messages: items,
+            nextCursor,
         });
     }
 )

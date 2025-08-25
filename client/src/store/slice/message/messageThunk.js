@@ -22,18 +22,18 @@ export const sendMessageThunk = createAsyncThunk('message/send',
 );
 
 
-export const getMessagesThunk = createAsyncThunk('message/getMesssages',
-    async ({ receiverId }, { rejectWithValue }) => {
-        try {
-            const response = await axiosInstance.get(`message/get-messages/${receiverId}`);
-            return response.data;
+// export const getMessagesThunk = createAsyncThunk('message/getMesssages',
+//     async ({ receiverId }, { rejectWithValue }) => {
+//         try {
+//             const response = await axiosInstance.get(`message/get-messages/${receiverId}`);
+//             return response.data;
 
-        } catch (error) {
-            const errorOutput = error?.response?.data?.errMessage;
-            return rejectWithValue(errorOutput)
-        }
-    }
-);
+//         } catch (error) {
+//             const errorOutput = error?.response?.data?.errMessage;
+//             return rejectWithValue(errorOutput)
+//         }
+//     }
+// );
 
 export const  clearChatThunk = createAsyncThunk('message/clearChat',
     async ({ receiverId }, { rejectWithValue }) => {

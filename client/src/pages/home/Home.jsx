@@ -6,7 +6,7 @@ import {
   initializeSocket,
   setOnlineUsers,
 } from "../../store/slice/socket/socketSlice";
-import { setMessages, setNewMessage } from "../../store/slice/message/messageSlice";
+import { resetLiveMessages, setNewMessage } from "../../store/slice/message/messageSlice";
 import { useWindowWidth } from "@react-hook/window-size";
 import { updateDeletedUser } from "../../store/slice/user/userSlice";
 
@@ -48,8 +48,8 @@ const Home = () => {
       dispatch(updateDeletedUser(userId));
     })
 
-    socket.on('clearedChat', () => {
-      dispatch(setMessages());
+    socket.on('clearedChat', () =>  {
+      dispatch(resetLiveMessages());
     })
 
     return () =>{
