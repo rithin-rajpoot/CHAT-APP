@@ -71,7 +71,7 @@ const SendMsg = ({ onTyping, onStopTyping }) => {
         <input
           type="text"
           placeholder="Type here"
-          className="input input-bordered input-primary w-full"
+          className="input input-bordered input-primary w-full md:w-[76%]"
           value={message}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -81,9 +81,9 @@ const SendMsg = ({ onTyping, onStopTyping }) => {
         ) : (
           <button
             onClick={handleSendMessage}
-            className="btn btn-square btn-outline btn-primary"
+            className="btn btn-square btn-outline btn-primary "
           >
-            <IoSend />
+            <IoSend size={18}/>
           </button>
         )}
       </div>

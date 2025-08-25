@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosSettings } from "react-icons/io";
 import { useWindowWidth } from "@react-hook/window-size";
+import { useQueryClient } from "@tanstack/react-query";
 import { setSelectedUser } from "../../store/slice/user/userSlice";
 import { clearChatThunk } from "../../store/slice/message/messageThunk";
+import { resetLiveMessages } from "../../store/slice/message/messageSlice";
 
 const TopContainer = ({ userDetails }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { onlineUsers } = useSelector((state) => state.socketReducer);
   const { selectedUser } = useSelector((state) => state.userReducer);
   const onlyWidth = useWindowWidth();
@@ -32,7 +35,30 @@ const TopContainer = ({ userDetails }) => {
 
   const clearChat = async () => {
     setMenuOpen(false); 
-    await dispatch(clearChatThunk({ receiverId: selectedUser?._id }));
+    try {
+      // Clear live messages from Redux immediately
+      dispatch(resetLiveMessages());
+      
+      // Reset React Query cache to empty state immediately for better UX
+      queryClient.setQueryData(["messages", selectedUser?._id], {
+        pages: [{ messages: [], nextCursor: null }],
+        pageParams: [null]
+      });
+      
+      // Perform the actual clear chat API call
+      await dispatch(clearChatThunk({ receiverId: selectedUser?._id }));
+      
+      // Invalidate to ensure fresh data on next load
+      queryClient.invalidateQueries({
+        queryKey: ["messages", selectedUser?._id]
+      });
+    } catch (error) {
+      console.error("Error clearing chat:", error);
+      // On error, invalidate to restore correct state
+      queryClient.invalidateQueries({
+        queryKey: ["messages", selectedUser?._id]
+      });
+    }
   };
 
   const handleBack = () => {

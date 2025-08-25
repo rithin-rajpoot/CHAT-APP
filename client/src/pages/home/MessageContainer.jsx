@@ -8,7 +8,7 @@ import NoChatSelected from "./NoChatSelected.jsx";
 import ClearingChatSkeleton from "../skeletons/ClearingChatSkeleton.jsx";
 import NoMessages from "../skeletons/NoMessages.jsx";
 import { format } from "date-fns";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchMessages } from "../../api/messageApi.js";
 import { resetLiveMessages } from "../../store/slice/message/messageSlice.js";
 
@@ -21,6 +21,8 @@ const MessageContainer = () => {
     (state) => state.messageReducer
   );
 
+  const queryClient = useQueryClient();
+  
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, error, isLoading, isError } =
     useInfiniteQuery({
       queryKey: ["messages", selectedUser?._id],
@@ -120,12 +122,32 @@ const MessageContainer = () => {
         }
       });
 
+      // Listen for chat cleared event
+      socket.on("clearedChat", () => {
+        // Clear live messages immediately
+        dispatch(resetLiveMessages());
+        
+        // Reset React Query cache to empty state immediately
+        if (selectedUser?._id) {
+          queryClient.setQueryData(["messages", selectedUser._id], {
+            pages: [{ messages: [], nextCursor: null }],
+            pageParams: [null]
+          });
+          
+          // Invalidate to ensure fresh data on next load
+          queryClient.invalidateQueries({
+            queryKey: ["messages", selectedUser._id]
+          });
+        }
+      });
+
       return () => {
         socket.off("typing");
         socket.off("stopTyping");
+        socket.off("clearedChat");
       };
     }
-  }, [socket, selectedUser]);
+  }, [socket, selectedUser, queryClient, dispatch]);
 
   // Scroll to bottom when new live messages arrive or typing state changes
   useEffect(() => {
