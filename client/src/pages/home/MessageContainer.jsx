@@ -111,13 +111,18 @@ const MessageContainer = () => {
   useEffect(() => {
     dispatch(resetLiveMessages());
     previousLiveMessagesLength.current = 0; // Reset the ref when switching users
-    // Scroll to bottom when switching to a new chat
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "auto" });
-      }
-    }, 100);
   }, [selectedUser?._id]);
+
+  // Scroll to bottom when messages finish loading initially or when switching users
+  useEffect(() => {
+    if (!isLoading && !isFetchingNextPage && selectedUser && allMessages.length >= 0) {
+      setTimeout(() => {
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+        }
+      }, 100);
+    }
+  }, [isLoading, selectedUser?._id, allMessages.length]);
 
   useEffect(() => {
     if (socket) {

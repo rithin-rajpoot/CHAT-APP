@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IoSend } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { sendMessageThunk } from "../../store/slice/message/messageThunk";
-import { setNewMessage } from "../../store/slice/message/messageSlice";
 const SendMsg = ({ onTyping, onStopTyping }) => {
   const dispatch = useDispatch();
 
@@ -32,7 +31,7 @@ const SendMsg = ({ onTyping, onStopTyping }) => {
       // console.log('Calling onTyping function');
       onTyping();
 
-      // Clear previous timeout
+      // Clear previous timeout to store the new timeout id
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
