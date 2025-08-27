@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { io } from 'socket.io-client';
+import { logoutUserThunk } from '../user/userThunk';
 
 const initialState = {
   socket: null,
@@ -27,6 +28,16 @@ const socketSlice = createSlice({
         state.socket = null;
       }
     },
+  },
+  extraReducers: (builder) => {
+    // Reset socket state on logout
+    builder.addCase(logoutUserThunk.fulfilled, (state) => {
+      if (state.socket) {
+        state.socket.disconnect();
+        state.socket = null;
+      }
+      state.onlineUsers = [];
+    });
   },
 });
 

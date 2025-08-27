@@ -8,6 +8,8 @@ import {
 } from "../../store/slice/user/userThunk";
 import { useNavigate } from "react-router-dom";
 import { disconnectSocket } from "../../store/slice/socket/socketSlice";
+import { resetLiveMessages } from "../../store/slice/message/messageSlice";
+import { useQueryClient } from "@tanstack/react-query";
 import UserSideBarSkeleton from "../skeletons/UserSideBarSkeleton";
 
 
@@ -15,6 +17,7 @@ const UserSidebar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { otherUsers, userProfile, screenLoading } = useSelector((state) => state.userReducer);
 
 
@@ -22,9 +25,29 @@ const UserSidebar = () => {
   const [filteredUsers, setFilteredUsers] = useState(otherUsers);
 
   const handleLogout = async () => {
-    await dispatch(logoutUserThunk());
-    dispatch(disconnectSocket());
-    navigate("/login");
+    try {
+      // 1. Clear live messages immediately
+      dispatch(resetLiveMessages());
+      
+      // 2. Clear React Query cache
+      queryClient.clear();
+      
+      // 3. Disconnect socket
+      dispatch(disconnectSocket());
+      
+      // 4. Call logout API and clear Redux state
+      await dispatch(logoutUserThunk());
+      
+      // 5. Navigate to login
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if logout fails, clear local state and navigate
+      dispatch(resetLiveMessages());
+      queryClient.clear();
+      dispatch(disconnectSocket());
+      navigate("/login");
+    }
   };
 
   useEffect(() => {

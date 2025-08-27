@@ -1,10 +1,9 @@
-import React, { use, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { format } from 'date-fns'
 
 const Message = ({ messageDetails }) => {
 
-  const messageRef = useRef(null);
   const time = format(new Date(messageDetails.createdAt), 'HH:mm');
 
   const { selectedUser, userProfile } = useSelector(
@@ -17,7 +16,6 @@ const Message = ({ messageDetails }) => {
   return (
     <>
       <div
-        ref={messageRef}
         className={`chat ${
           userProfile?._id === messageDetails?.senderId
             ? "chat-end"

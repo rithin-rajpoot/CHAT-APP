@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
 const DeleteAccountConfirmation = ({ 
@@ -13,6 +13,14 @@ const DeleteAccountConfirmation = ({
   
   const expectedText = 'DELETE';
   const isConfirmValid = confirmText === expectedText;
+
+  // Clear state when dialog closes (isOpen becomes false)
+  useEffect(() => {
+    if (!isOpen) {
+      setConfirmText('');
+      setIsTyping(false);
+    }
+  }, [isOpen]);
 
   const handleConfirm = () => {
     if (isConfirmValid && !isLoading) {

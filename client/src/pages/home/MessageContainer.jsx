@@ -49,6 +49,7 @@ const MessageContainer = () => {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const previousScrollHeight = useRef(0);
+  const previousScrollTop = useRef(0);
   const previousLiveMessagesLength = useRef(0);
 
   const dispatch = useDispatch();
@@ -62,8 +63,9 @@ const MessageContainer = () => {
     if (container.scrollTop <= 50 && hasNextPage && !isFetchingNextPage) {
       setIsLoadingMore(true);
       setJustLoadedOlderMessages(true);
-      // Store current scroll height before loading more messages
+      // Store current scroll height and position before loading more messages
       previousScrollHeight.current = container.scrollHeight;
+      previousScrollTop.current = container.scrollTop;
       
       try {
         await fetchNextPage();
@@ -92,8 +94,10 @@ const MessageContainer = () => {
     if (heightDifference > 0) {
       // Use requestAnimationFrame to ensure DOM has updated
       requestAnimationFrame(() => {
-        container.scrollTop = heightDifference;
+        // Maintain the user's position by adding the height difference to their previous scroll position
+        container.scrollTop = previousScrollTop.current + heightDifference;
         previousScrollHeight.current = 0; // Reset after adjusting
+        previousScrollTop.current = 0; // Reset after adjusting
       });
     }
   }, [allMessages, justLoadedOlderMessages]);
@@ -113,16 +117,20 @@ const MessageContainer = () => {
     previousLiveMessagesLength.current = 0; // Reset the ref when switching users
   }, [selectedUser?._id]);
 
-  // Scroll to bottom when messages finish loading initially or when switching users
+  // Scroll to bottom when messages finish loading initially (only for first load, not pagination)
   useEffect(() => {
-    if (!isLoading && !isFetchingNextPage && selectedUser && allMessages.length >= 0) {
-      setTimeout(() => {
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: "auto" });
-        }
-      }, 100);
+    if (!isLoading && !isFetchingNextPage && selectedUser && !justLoadedOlderMessages && status === 'success') {
+      // Only scroll on initial load, not when loading more messages
+      const isInitialLoad = data?.pages?.length === 1; // First page loaded
+      if (isInitialLoad) {
+        setTimeout(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "auto" });
+          }
+        }, 100);
+      }
     }
-  }, [isLoading, selectedUser?._id, allMessages.length]);
+  }, [isLoading, selectedUser?._id, status, data?.pages?.length, justLoadedOlderMessages]);
 
   useEffect(() => {
     if (socket) {

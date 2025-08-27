@@ -4,12 +4,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { User, Settings, LogOut, Menu, X, Trash2, Home } from "lucide-react";
 import { logoutUserThunk, deleteUserThunk } from "../store/slice/user/userThunk";
 import { disconnectSocket } from "../store/slice/socket/socketSlice";
+import { resetLiveMessages } from "../store/slice/message/messageSlice";
+import { useQueryClient } from "@tanstack/react-query";
 import DeleteAccountConfirmation from "./DeleteAccountConfirmation";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const { isAuthenticated, userProfile } = useSelector((state) => state.userReducer);
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -30,29 +33,83 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Cleanup loading states when component unmounts
+  useEffect(() => {
+    return () => {
+      setIsDeletingAccount(false);
+      setShowDeleteConfirmation(false);
+    };
+  }, []);
+
+  // Reset delete states when authentication changes (user logs out or account is deleted)
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setIsDeletingAccount(false);
+      setShowDeleteConfirmation(false);
+    }
+  }, [isAuthenticated]);
+
   const handleLogout = async () => {
-    await dispatch(logoutUserThunk());
-    dispatch(disconnectSocket());
-    navigate("/login");
-    setIsDropdownOpen(false);
+    try {
+      // 1. Clear live messages immediately
+      dispatch(resetLiveMessages());
+      
+      // 2. Clear React Query cache
+      queryClient.clear();
+      
+      // 3. Disconnect socket
+      dispatch(disconnectSocket());
+      
+      // 4. Call logout API and clear Redux state
+      await dispatch(logoutUserThunk());
+      
+      // 5. Navigate to login
+      navigate("/login");
+      setIsDropdownOpen(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if logout fails, clear local state and navigate
+      dispatch(resetLiveMessages());
+      queryClient.clear();
+      dispatch(disconnectSocket());
+      navigate("/login");
+      setIsDropdownOpen(false);
+    }
   };
 
   const handleDeleteAccount = () => {
     setShowDeleteConfirmation(true);
     setIsDropdownOpen(false);
     setIsMobileMenuOpen(false);
+    // Reset loading state when opening dialog
+    setIsDeletingAccount(false);
   };
 
   const handleConfirmDelete = async () => {
     try {
       setIsDeletingAccount(true);
+      
+      // 1. Clear live messages immediately
+      dispatch(resetLiveMessages());
+      
+      // 2. Clear React Query cache
+      queryClient.clear();
+      
+      // 3. Call delete API (this will also disconnect socket and clear Redux state)
       await dispatch(deleteUserThunk());
+      
+      // 4. Disconnect socket (extra safety)
       dispatch(disconnectSocket());
+      
+      // 5. Close dialog and navigate
       setShowDeleteConfirmation(false);
+      setIsDeletingAccount(false);
       navigate("/login");
     } catch (error) {
       console.error("Error deleting account:", error);
+      // Reset loading state on error
       setIsDeletingAccount(false);
+      // Keep the dialog open so user can try again
     }
   };
 

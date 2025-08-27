@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { clearChatThunk, sendMessageThunk } from './messageThunk';
+import { logoutUserThunk } from '../user/userThunk';
 
 const initialState = {
     buttonLoading: false,       // loading state for sending message button
@@ -48,6 +49,13 @@ const messageSlice = createSlice({
         });
 
         builder.addCase(clearChatThunk.rejected, (state) => { 
+            state.clearChatLoading = false;
+        });
+
+        // Reset message state on logout
+        builder.addCase(logoutUserThunk.fulfilled, (state) => {
+            state.buttonLoading = false;
+            state.liveMessages = [];
             state.clearChatLoading = false;
         });
     },
