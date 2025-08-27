@@ -45,9 +45,11 @@ const MessageContainer = () => {
   const allMessages = [...oldMessages, ...liveMessages];
   const [isTyping, setIsTyping] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [justLoadedOlderMessages, setJustLoadedOlderMessages] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const previousScrollHeight = useRef(0);
+  const previousLiveMessagesLength = useRef(0);
 
   const dispatch = useDispatch();
 
@@ -59,6 +61,7 @@ const MessageContainer = () => {
     // Check if user scrolled to the top (with a small buffer)
     if (container.scrollTop <= 50 && hasNextPage && !isFetchingNextPage) {
       setIsLoadingMore(true);
+      setJustLoadedOlderMessages(true);
       // Store current scroll height before loading more messages
       previousScrollHeight.current = container.scrollHeight;
       
@@ -68,6 +71,10 @@ const MessageContainer = () => {
         // Small delay to ensure smooth UX
         setTimeout(() => {
           setIsLoadingMore(false);
+          // Reset the flag after a short delay to allow scroll position to settle
+          setTimeout(() => {
+            setJustLoadedOlderMessages(false);
+          }, 100);
         }, 300);
       }
     }
@@ -76,17 +83,20 @@ const MessageContainer = () => {
   // Maintain scroll position after loading new messages
   useEffect(() => {
     const container = messagesContainerRef.current;
-    if (!container || !previousScrollHeight.current) return;
+    if (!container || !previousScrollHeight.current || !justLoadedOlderMessages) return;
 
     // Calculate new scroll position to maintain user's view
     const newScrollHeight = container.scrollHeight;
     const heightDifference = newScrollHeight - previousScrollHeight.current;
     
     if (heightDifference > 0) {
-      container.scrollTop = heightDifference;
-      previousScrollHeight.current = 0; // Reset after adjusting
+      // Use requestAnimationFrame to ensure DOM has updated
+      requestAnimationFrame(() => {
+        container.scrollTop = heightDifference;
+        previousScrollHeight.current = 0; // Reset after adjusting
+      });
     }
-  }, [allMessages]);
+  }, [allMessages, justLoadedOlderMessages]);
 
   // Add scroll event listener
   useEffect(() => {
@@ -100,6 +110,7 @@ const MessageContainer = () => {
   // Clear live messages when switching chat:
   useEffect(() => {
     dispatch(resetLiveMessages());
+    previousLiveMessagesLength.current = 0; // Reset the ref when switching users
     // Scroll to bottom when switching to a new chat
     setTimeout(() => {
       if (messagesEndRef.current) {
@@ -151,17 +162,29 @@ const MessageContainer = () => {
 
   // Scroll to bottom when new live messages arrive or typing state changes
   useEffect(() => {
-    if (messagesEndRef.current && !isLoadingMore) {
-      // Only auto-scroll if user is near the bottom (to avoid interrupting reading older messages)
+    if (messagesEndRef.current && !isLoadingMore && !justLoadedOlderMessages) {
       const container = messagesContainerRef.current;
       if (container) {
         const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-        if (isNearBottom || liveMessages.length > 0) {
+        
+        // Check if new live messages were actually added (not just existing ones)
+        const hasNewLiveMessages = liveMessages.length > previousLiveMessagesLength.current;
+        const latestMessage = liveMessages[liveMessages.length - 1];
+        const isOwnMessage = hasNewLiveMessages && latestMessage && latestMessage.senderId === userProfile?._id;
+        
+        // Always scroll for own messages, or scroll for received messages only if near bottom
+        if (isOwnMessage || (isNearBottom && hasNewLiveMessages) || isTyping) {
           messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
+        
+        // Update the previous length
+        previousLiveMessagesLength.current = liveMessages.length;
       }
+    } else {
+      // Still update the ref even when not scrolling to keep it in sync
+      previousLiveMessagesLength.current = liveMessages.length;
     }
-  }, [liveMessages, isTyping, isLoadingMore]);
+  }, [liveMessages, isTyping, isLoadingMore, justLoadedOlderMessages, userProfile?._id]);
 
   // Centralized typing functions to pass down to SendMsg
   const handleTyping = () => {
@@ -216,14 +239,14 @@ const MessageContainer = () => {
       {!selectedUser ? (
         <NoChatSelected />
       ) : (
-        <div className="w-full h-full flex flex-col pb-10">
+        <div className="w-full h-full flex flex-col">
           <div className="px-2 py-2 border-b border-b-primary/30 sticky top-0 bg-base-100 z-10">
             <TopContainer userDetails={selectedUser} />
           </div>
           <div
             ref={messagesContainerRef}
-            className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out relative ${
-              isTyping ? "h-[calc(100%-2rem)] pb-6" : "h-full pb-3"
+            className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out relative flex-1 ${
+              isTyping ? "pb-6" : "pb-3"
             }`}
           >
             {/* Sticky loading overlay at the top */}
