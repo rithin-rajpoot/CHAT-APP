@@ -258,7 +258,7 @@ const MessageContainer = () => {
           </div>
           <div
             ref={messagesContainerRef}
-            className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out relative flex-1 ${
+            className={`overflow-y-auto p-3 transition-all duration-300 ease-in-out relative h-full ${
               isTyping ? "pb-6" : "pb-3"
             }`}
           >
