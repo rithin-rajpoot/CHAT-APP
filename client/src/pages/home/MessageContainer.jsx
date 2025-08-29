@@ -32,20 +32,23 @@ const MessageContainer = () => {
       getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     });
 
+    // console.log(data);
+
   // Replace Redux messages with data from React Query:
   // Note: Server sends messages in descending order (newest first) for pagination,
   // We need to reverse each page and then reverse the pages order for correct display
   const allPages = data?.pages || [];
   const oldMessages = allPages
-    .slice()
+    .slice() // make a shallow copy to not mutate the original
     .reverse() // Reverse page order (oldest pages first)
-    .flatMap((page) => page.messages.slice().reverse()) // Reverse messages in each page (oldest first)
+    .flatMap((page) => page.messages.slice().reverse()) // Reverse messages in each page (oldest first) and combine messages of all the pages to single array (oldMessages)
     ?? [];
 
   const allMessages = [...oldMessages, ...liveMessages];
   const [isTyping, setIsTyping] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [justLoadedOlderMessages, setJustLoadedOlderMessages] = useState(false);
+  
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const previousScrollHeight = useRef(0);
