@@ -77,7 +77,7 @@ const UserSidebar = () => {
   if (screenLoading) return <UserSideBarSkeleton />
 
   return (
-    <div className="w-full md:max-w-[20rem] h-full flex flex-col border-r border-r-primary/30">
+    <div className="w-full mt-[65px] md:max-w-[20rem] h-full flex flex-col border-r border-r-primary/30">
       <div className="py-2 px-2 w-full ">
         <label className="input input-bordered flex items-center gap-2 w-full">
           <input

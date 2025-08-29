@@ -149,7 +149,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="h-[65px] bg-base-100 border-b border-base-300 fixed top-0 z-50 px-4 md:px-0">
+    <nav className="h-[65px] w-full bg-base-100 border-b border-base-300 fixed top-0 z-50 px-4 md:px-0">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo */}
